@@ -2,10 +2,11 @@
 </script>
 <template id="view-details-template">
     <div>
+    <div>
         <div>
             <a class="btn btn-outline-secondary" v-on:click="loadData()"><i class="fas fa-fw fa-sync-alt"></i>
             </a>
-            <a class="btn btn-outline-secondary"><i class="fas fa-fw fa-plus"></i>
+            <a class="btn btn-outline-secondary" v-on:click="addDetail()"><i class="fas fa-fw fa-plus"></i>
             </a>
             <a class="btn btn-danger btn-outline-danger">
                    <i class="fas fa-fw fa-trash-alt">
@@ -32,14 +33,14 @@
                     <td>{{ detail.code }}</td>
                     <td>{{ detail.name }}</td>
                     <td>{{ detail.description }}</td>
-                    <td>{{ detail.is_standard }}</td>
+                    <td><input type="checkbox" class="form-check-inline" v-model="detail.is_standard"></td>
                     <td>
-                        <a class="btn btn-outline-secondary btn-sm">
+                        <a class="btn btn-outline-secondary btn-sm" v-on:click="editDetail(detail)">
                             <i class="far fa-fw fa-edit">
 
                             </i>
                         </a>
-                        <a class="btn btn-outline-danger btn-sm">
+                        <a class="btn btn-outline-danger btn-sm" v-on:click="deleteDetail(detail)">
                             <i class="far fa-fw fa-trash-alt">
 
                             </i>
@@ -48,5 +49,34 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div class="modal fade show" style="display: block" tabindex="-1" v-show="showmodal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Деталь</h5>
+                <button class="close" type="button">
+                  <span aria-hidden="true" v-on:click="showmodal=false">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <label class="form-check-label">Шифр детали</label>
+                  <input class="form-control" v-model="current_detail.code">
+                  <label class="form-check-label">Наименование</label>
+                  <input class="form-control" v-model="current_detail.name">
+                  <label class="form-check-label" >Описание</label>
+                  <textarea class="form-control" v-model="current_detail.description"></textarea>
+
+                  <input type="checkbox" class="form-check-inline" v-model="current_detail.is_standard">
+                  <label class="form-check-label"> Стандартное изделие</label>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" v-on:click="showmodal=false">Отмена</button>
+                <button class="btn btn-primary" v-on:click="saveCurrent()" >Сохранить</button>
+              </div>
+            </div>
+          </div>
+    </div>
+        <div class="modal-backdrop fade show" v-show="showmodal"></div>
     </div>
 </template>

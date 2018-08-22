@@ -22,7 +22,7 @@ def create_detail(session, **kwargs):
 
 def update_detail(session, id=None, name=None, description=None, is_standard=False, **kwargs):
     try:
-        detail = session.query(models.Detail).filter(models.Detail.code == id).first()
+        detail = session.query(models.Detail).filter(models.Detail.id == id).first()
         if detail is None:
             raise DetailNotFoundException(id)
         detail.name = name

@@ -41,9 +41,15 @@ $().ready(function(){
                        }
                    }
                )
+           },
+           parseHash: function(){
+               this.current_view = window.location.hash.substr(1);
            }
+
        }
    });
     app.checkLoggedIn();
+    app.parseHash();
+    window.onhashchange = app.parseHash;
 
 });

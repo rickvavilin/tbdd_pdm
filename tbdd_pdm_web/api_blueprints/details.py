@@ -34,10 +34,12 @@ def get_detail_by_id(detail_id):
         elif request.method == 'POST':
             if not request.is_json:
                 return jsonify({}), 400
-            return jsonify(details.update_detail(db.session, detail_id, **request.json))
+            request.json['id'] = int(detail_id)
+            print(request.json)
+            return jsonify(details.update_detail(db.session, **request.json))
         elif request.method == 'DELETE':
             return jsonify(details.delete_detail(db.session, detail_id))
-    except exceptions.DetailNotFoundException:
+    except exceptions.DetailNotFoundException as e:
         return jsonify({}), 404
 
 

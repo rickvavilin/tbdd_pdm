@@ -21,8 +21,18 @@ function api_fetch_json(url_elements, options){
     )
 }
 
-function api_post_json(url_elements, options){
+function api_post_json(url_elements, data, options){
     options.method = 'POST';
+    options.headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+    options.body = JSON.stringify(data);
+    return api_fetch_json(url_elements, options)
+}
+
+function api_delete_json(url_elements, options){
+    options.method = 'DELETE';
     options.headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -47,14 +57,10 @@ async function _sha256(message) {
 
 function api_login(login, password){
     return _sha256(password).then((password_hash)=>{
-        return api_post_json(['auth', 'login'], {
-                body: JSON.stringify(
-                    {
+        return api_post_json(['auth', 'login'],{
                         'login': login,
                         'password_hash': password_hash
-                    }
-                )
-            })
+                    },{});
     });
 }
 
