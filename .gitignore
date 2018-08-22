@@ -1,2 +1,6 @@
 .idea
+.tox
+.cache
+.pytest_cache
+junit-py35.xml
 __pycache__

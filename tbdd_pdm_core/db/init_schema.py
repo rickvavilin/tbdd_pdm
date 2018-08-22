@@ -1,7 +1,5 @@
 __author__ = 'Aleksandr Vavilin'
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.schema import DDL
 from . import models
 
 
