@@ -2,6 +2,7 @@ $().ready(function(){
    app = new Vue({
        el: '#vueroot',
        data: {
+           current_view: undefined,
            logged_in: false,
            app_loaded: false,
            loginform: {

@@ -1,0 +1,52 @@
+<script type="text/javascript" src="/js/views/details.js">
+</script>
+<template id="view-details-template">
+    <div>
+        <div>
+            <a class="btn btn-outline-secondary" v-on:click="loadData()"><i class="fas fa-fw fa-sync-alt"></i>
+            </a>
+            <a class="btn btn-outline-secondary"><i class="fas fa-fw fa-plus"></i>
+            </a>
+            <a class="btn btn-danger btn-outline-danger">
+                   <i class="fas fa-fw fa-trash-alt">
+
+                            </i>
+            </a>
+        </div>
+        <div style="height:1rem"></div>
+        <table class="table table-bordered table-sm">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Шифр детали</th>
+                <th>Наименование</th>
+                <th>Описание</th>
+                <th>Стандартное изделие</th>
+                <th></th>
+            </tr>
+
+            </thead>
+            <tbody>
+                <tr v-for="detail in details">
+                    <td><input type="checkbox" v-model="detail._checked"></td>
+                    <td>{{ detail.code }}</td>
+                    <td>{{ detail.name }}</td>
+                    <td>{{ detail.description }}</td>
+                    <td>{{ detail.is_standard }}</td>
+                    <td>
+                        <a class="btn btn-outline-secondary btn-sm">
+                            <i class="far fa-fw fa-edit">
+
+                            </i>
+                        </a>
+                        <a class="btn btn-outline-danger btn-sm">
+                            <i class="far fa-fw fa-trash-alt">
+
+                            </i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</template>

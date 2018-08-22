@@ -4,17 +4,17 @@ import pytest
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from tbdd_pdm_core.db import init_schema
-from tbdd_pdm_core.api import details, exceptions
+from tbdd_pdm_core.api import details, users, exceptions
 import pprint
 
 
 @pytest.yield_fixture(scope='module')
 def session():
     try:
-        os.unlink('test.db')
+        os.unlink('test_web.db')
     except:
         pass
-    conn_string = 'sqlite+pysqlite:///test.db'
+    conn_string = 'sqlite+pysqlite:///test_web.db'
     init_schema.init_schema(conn_string)
     engine = create_engine(conn_string)
     Session = sessionmaker(bind=engine)
@@ -22,6 +22,8 @@ def session():
     yield _s
     _s.close()
 
+def test_create_user(session):
+    users.create_user(session, 'admin', 'password')
 
 def test_create_details(session):
     details.create_detail(session, code='D001', name='detail 1', description='detail 1 description')

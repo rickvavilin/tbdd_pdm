@@ -11,7 +11,7 @@ class CustomFlask(Flask):
     ))
 
 app = CustomFlask(__name__, template_folder='../resources/templates', static_folder='../resources/static', static_url_path='')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///test_web.db'
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 db = flask_sqlalchemy.SQLAlchemy(app)
 

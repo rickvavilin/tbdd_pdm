@@ -4,3 +4,4 @@
 .pytest_cache
 junit-py35.xml
 __pycache__
+*.pyc
