@@ -12,8 +12,10 @@ Vue.component('view-details', {
         return  {
             details: this.details==undefined ? [] : this.details,
             showmodal: this.showmodal==undefined ? false : this.showmodal,
+            showdeleteconfirm: this.showdeleteconfirm==undefined ? false : this.showdeleteconfirm,
             current_detail: this.current_detail==undefined ? Object.assign({}, DEFAULT_DETAIL) : this.current_detail,
-            messages: this.messages==undefined ? [] : this.messages
+            messages: this.messages==undefined ? [] : this.messages,
+            detail_filter: this.detail_filter
         }
     },
     mounted: function(){
@@ -79,7 +81,11 @@ Vue.component('view-details', {
             )
         },
         loadData: function(){
-            api_fetch_json(['details'], {}).then(
+            let params = {};
+            if (this.detail_filter) {
+                params.simple_filter = this.detail_filter;
+            }
+            api_fetch_json(['details'], {}, params).then(
                 (data) => {
                     this.details = data.data;
                 }
@@ -97,11 +103,16 @@ Vue.component('view-details', {
             });
         },
         deleteDetail: function(detail){
+            this.showdeleteconfirm = false;
             api_delete_json(['details', detail.id], {}).then(
                 (data) => {
                     this.loadData()
                 }
             )
+        },
+        deleteDetailConfirm: function(detail){
+            this.current_detail = detail;
+            this.showdeleteconfirm = true;
         },
         saveCurrent: function(close_modal){
             var url_elements = ['details'];
@@ -111,6 +122,7 @@ Vue.component('view-details', {
             api_post_json(url_elements, this.current_detail, {}).then(
                 (data) => {
                     this.showmodal = !close_modal;
+                    this.current_detail = data;
                     this.loadData()
                 }
             )

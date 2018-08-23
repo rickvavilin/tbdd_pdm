@@ -17,7 +17,8 @@ def index():
         page = request.args.get('page', 1)
         return jsonify(details.get_list(db.session,
                                         results_per_page=results_per_page,
-                                        page=page))
+                                        page=page,
+                                        simple_filter=request.args.get('simple_filter')))
     elif request.method == 'POST':
         if not request.is_json:
             return jsonify({}), 400

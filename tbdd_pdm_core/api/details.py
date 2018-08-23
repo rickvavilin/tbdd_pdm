@@ -1,6 +1,7 @@
 from ..db import models
 from .exceptions import *
 import sqlalchemy.exc
+from sqlalchemy import or_
 __author__ = 'Aleksandr Vavilin'
 
 
@@ -15,6 +16,7 @@ def create_detail(session, code=None, name=None, description=None, is_standard=F
             )
             session.add(detail)
             session.commit()
+            tmp_id = detail.id
             return detail.get_dict_fields()
         except sqlalchemy.exc.IntegrityError:
             raise DetailAlreadyExistsException(kwargs['code'])
@@ -31,6 +33,7 @@ def update_detail(session, id=None, name=None, description=None, is_standard=Fal
         detail.description = description
         detail.is_standard = is_standard
         session.commit()
+        tmp_id = detail.id
         return detail.get_dict_fields()
     finally:
         session.rollback()
@@ -93,17 +96,22 @@ def get_assembly_tree(session, parent_id=None):
         session.rollback()
 
 
-def get_list(session, results_per_page=20, page=1, filter=None):
+def get_list(session, results_per_page=20, page=1, simple_filter=None, filter=None):
     result = {}
     try:
-        total_count = session.query(models.Detail).count()
+        q = session.query(models.Detail)
+        if simple_filter is not None:
+            simple_filter = '%'+simple_filter+'%'
+            q = q.filter(or_(models.Detail.code.like(simple_filter),
+                         models.Detail.name.like(simple_filter),
+                         models.Detail.description.like(simple_filter)))
+        total_count = q.count()
         total_pages = int(total_count/results_per_page)+1
         result['total_count'] = total_count
         result['total_pages'] = total_pages
         result['data'] = []
-        for detail in session.query(
-                models.Detail
-        ).offset(
+
+        for detail in q.offset(
             (page-1)*results_per_page
         ).limit(results_per_page):
             result['data'].append(detail.get_dict_fields())
