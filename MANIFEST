@@ -4,6 +4,7 @@ tbdd_pdm_core/__init__.py
 tbdd_pdm_core/api/__init__.py
 tbdd_pdm_core/api/details.py
 tbdd_pdm_core/api/exceptions.py
+tbdd_pdm_core/api/files.py
 tbdd_pdm_core/api/groups.py
 tbdd_pdm_core/api/users.py
 tbdd_pdm_core/db/__init__.py

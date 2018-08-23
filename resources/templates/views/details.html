@@ -51,15 +51,21 @@
         </table>
     </div>
     <div class="modal fade show" style="display: block" tabindex="-1" v-show="showmodal">
-          <div class="modal-dialog">
-            <div class="modal-content">
+          <div class="modal-dialog" style="max-width: 50rem">
+            <div class="modal-content" >
               <div class="modal-header">
                 <h5 class="modal-title">Деталь</h5>
-                <button class="close" type="button">
-                  <span aria-hidden="true" v-on:click="showmodal=false">×</span>
+                <button class="close" type="button" v-on:click="showmodal=false">
+                  <span aria-hidden="true">×</span>
                 </button>
               </div>
               <div class="modal-body">
+                  <div class="alert alert-danger alert-dismissible" v-for="message, index in messages">
+                      <button type="button" class="close" v-on:click="messages.splice(index,1)" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      {{ message.text }}
+                  </div>
                   <label class="form-check-label">Шифр детали</label>
                   <input class="form-control" v-model="current_detail.code">
                   <label class="form-check-label">Наименование</label>
@@ -69,10 +75,28 @@
 
                   <input type="checkbox" class="form-check-inline" v-model="current_detail.is_standard">
                   <label class="form-check-label"> Стандартное изделие</label>
+                  <div>
+                      <div v-for="file, index in current_detail.files">
+                          <a class="btn btn-sm" v-on:click="deleteFile(file)">
+                            <i class="far fa-fw fa-trash-alt"></i>
+                          </a>
+                          <a v-bind:href="'/api/details/' + current_detail.id + '/files/' + file.name">{{ file.name }}</a>
+                      </div>
+                  </div>
+                  <div class="card" id="filedropzone">
+                      <div class="card-body" v-if="current_detail.id==undefined">
+                          Сохраните деталь для появления возможности добавления файлов
+                      </div>
+                      <div class="card-body" v-else>
+                          Перетащите файл для загрузки
+                      </div>
+
+                  </div>
               </div>
               <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" v-on:click="showmodal=false">Отмена</button>
-                <button class="btn btn-primary" v-on:click="saveCurrent()" >Сохранить</button>
+                <button class="btn btn-primary" v-on:click="saveCurrent(false)" >Сохранить</button>
+                <button class="btn btn-primary" v-on:click="saveCurrent(true)" >Сохранить и закрыть</button>
               </div>
             </div>
           </div>

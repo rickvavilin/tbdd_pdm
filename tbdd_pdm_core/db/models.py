@@ -60,3 +60,4 @@ class DetailFile(Base, DictMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     detail_id = Column(Integer, ForeignKey(Detail.id))
+    UniqueConstraint('name', 'detail_id')

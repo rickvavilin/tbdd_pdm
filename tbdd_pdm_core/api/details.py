@@ -1,15 +1,17 @@
-__author__ = 'Aleksandr Vavilin'
 from ..db import models
 from .exceptions import *
-from sqlalchemy.orm import joinedload
 import sqlalchemy.exc
+__author__ = 'Aleksandr Vavilin'
 
 
-def create_detail(session, **kwargs):
+def create_detail(session, code=None, name=None, description=None, is_standard=False, **kwargs):
     try:
         try:
             detail = models.Detail(
-                **kwargs
+                code=code,
+                name=name,
+                description=description,
+                is_standard=is_standard
             )
             session.add(detail)
             session.commit()
@@ -114,4 +116,11 @@ def get_detail_by_id(session, detail_id=None):
     detail = session.query(models.Detail).filter(models.Detail.id == detail_id).first()
     if detail is None:
         raise DetailNotFoundException
-    return detail.get_dict_fields()
+    detail_dict = detail.get_dict_fields()
+    detail_files = []
+    for detail_file in session.query(models.DetailFile).filter(models.DetailFile.detail_id == detail.id).all():
+        detail_files.append(detail_file.get_dict_fields())
+    detail_dict['files'] = detail_files
+    return detail_dict
+
+

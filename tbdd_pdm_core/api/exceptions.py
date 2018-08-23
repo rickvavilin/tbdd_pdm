@@ -16,11 +16,19 @@ class DetailNotFoundException(Exception):
     pass
 
 
+class DetailFileNotFoundException(Exception):
+    pass
+
+
 class UserAlreadyExistsException(Exception):
     pass
 
 
 class DetailAlreadyExistsException(Exception):
+    pass
+
+
+class FileAlreadyExistsException(Exception):
     pass
 
 

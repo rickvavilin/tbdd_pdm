@@ -1,7 +1,11 @@
 __author__ = 'Aleksandr Vavilin'
 from flask import Flask, render_template
 import flask_sqlalchemy
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+
 from .api_blueprints import register_api_blueprints
+
 
 class CustomFlask(Flask):
     jinja_options = Flask.jinja_options.copy()
@@ -9,6 +13,13 @@ class CustomFlask(Flask):
         variable_start_string='^(',
         variable_end_string=')$',
     ))
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 app = CustomFlask(__name__, template_folder='../resources/templates', static_folder='../resources/static', static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///test_web.db'
