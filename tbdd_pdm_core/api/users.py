@@ -50,4 +50,20 @@ def get_user_info(session, login=None, **kwargs):
     user = session.query(models.User).filter(models.User.login == login).first()
     if user is None:
         raise UserNotFoundException
-    return user.get_dict_fields()
+    user_info = user.get_dict_fields()
+    user_permissions = []
+    for gp in session.query(
+                models.GroupPermissions
+            ).join(
+                models.UsersGroupsRel,
+                models.UsersGroupsRel.group_id == models.GroupPermissions.group_id
+            ).join(
+                models.User
+            ).filter(
+                models.User.id == user.id,
+                models.GroupPermissions.allowed == True
+            ):
+        if gp.function_name not in user_permissions:
+            user_permissions.append(gp.function_name)
+    user_info['user_permissions'] = user_permissions
+    return user_info

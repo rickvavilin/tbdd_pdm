@@ -6,6 +6,7 @@ default_user_permissions = [
     'tbdd_pdm_core.api.details.get_list',
     'tbdd_pdm_core.api.details.get_detail_by_id',
     'tbdd_pdm_core.api.details.get_assembly_tree',
+    'tbdd_pdm_core.api.details.get_assembly_list',
     'tbdd_pdm_core.api.files.get_file_data'
 ]
 
@@ -14,6 +15,7 @@ default_admin_permissions = [
     'tbdd_pdm_core.api.details.update_detail',
     'tbdd_pdm_core.api.details.delete_detail',
     'tbdd_pdm_core.api.details.add_detail_to_assembly',
+    'tbdd_pdm_core.api.details.remove_detail_from_assembly',
     'tbdd_pdm_core.api.files.add_file_to_detail',
     'tbdd_pdm_core.api.files.delete_file_by_detail_and_name',
     'tbdd_pdm_core.api.users.create_user',

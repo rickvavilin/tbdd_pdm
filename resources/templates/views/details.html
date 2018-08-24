@@ -6,15 +6,22 @@
         <div>
             <div class="row">
                 <span style="width: 1rem;"></span>
-                <a class="btn btn-outline-secondary" v-on:click="loadData()"><i class="fas fa-fw fa-sync-alt"></i>
+                <a class="btn btn-outline-secondary" v-on:click="loadData()" title="Обновить список"><i class="fas fa-fw fa-sync-alt"></i>
                 </a>
                 <span style="width: 0.2rem;"></span>
-                <a class="btn btn-outline-secondary" v-on:click="addDetail()"><i class="fas fa-fw fa-plus"></i>
+                <a class="btn btn-outline-secondary"
+                   v-on:click="addDetail()"
+                   v-if="havePermission('tbdd_pdm_core.api.details.create_detail')"
+                   title="Создать деталь"
+                >
+                    <i class="fas fa-fw fa-plus">
+
+                    </i>
                 </a>
                 <span style="width: 0.2rem;"></span>
-                <a class="btn btn-danger btn-outline-danger"><i class="fas fa-fw fa-trash-alt"></i>
-                </a>
-                <span style="width: 0.2rem;"></span>
+{#                <a class="btn btn-danger btn-outline-danger"><i class="fas fa-fw fa-trash-alt"></i>#}
+{#                </a>#}
+{#                <span style="width: 0.2rem;"></span>#}
                 <input class="form-control form-inline" style="max-width: 20rem" placeholder="Фильтр" v-model="detail_filter" v-on:input="loadData">
 
             </div>
@@ -45,7 +52,7 @@
 
                             </i>
                         </a>
-                        <a class="btn btn-outline-danger btn-sm" v-on:click="deleteDetailConfirm(detail)">
+                        <a class="btn btn-outline-danger btn-sm" v-on:click="deleteDetailConfirm(detail)" v-if="havePermission('tbdd_pdm_core.api.details.delete_detail')">
                             <i class="far fa-fw fa-trash-alt">
 
                             </i>
@@ -99,9 +106,9 @@
                   </div>
               </div>
               <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" v-on:click="showmodal=false">Отмена</button>
-                <button class="btn btn-primary" v-on:click="saveCurrent(false)" >Сохранить</button>
-                <button class="btn btn-primary" v-on:click="saveCurrent(true)" >Сохранить и закрыть</button>
+                <button class="btn btn-secondary" type="button" v-on:click="showmodal=false">Закрыть</button>
+                <button class="btn btn-primary" v-on:click="saveCurrent(false)" v-if="havePermission('tbdd_pdm_core.api.details.update_detail')" >Сохранить</button>
+                <button class="btn btn-primary" v-on:click="saveCurrent(true)" v-if="havePermission('tbdd_pdm_core.api.details.update_detail')">Сохранить и закрыть</button>
               </div>
             </div>
           </div>
@@ -122,7 +129,7 @@
               </div>
               <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" v-on:click="showdeleteconfirm=false">Отмена</button>
-                <button class="btn btn-danger" v-on:click="deleteDetail(current_detail)" >Удалить</button>
+                <button class="btn btn-danger" v-on:click="deleteDetail(current_detail)" v-if="havePermission('tbdd_pdm_core.api.details.delete_detail')" >Удалить</button>
 
               </div>
             </div>

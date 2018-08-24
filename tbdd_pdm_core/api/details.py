@@ -17,6 +17,7 @@ def create_detail(session, code=None, name=None, description=None, is_standard=F
                 is_standard=is_standard
             )
             session.add(detail)
+            session.flush()
             session.commit()
             tmp_id = detail.id
             return detail.get_dict_fields()
@@ -35,6 +36,7 @@ def update_detail(session, id=None, name=None, description=None, is_standard=Fal
         detail.name = name
         detail.description = description
         detail.is_standard = is_standard
+        session.flush()
         session.commit()
         tmp_id = detail.id
         return get_detail_by_id(session, detail_id=detail.id)
@@ -82,7 +84,21 @@ def add_detail_to_assembly(session, parent_id=None, child_id=None, min_count=0, 
 
 
 @permissions.check_permissions
-def get_assembly_tree(session, parent_id=None):
+def remove_detail_from_assembly(session, parent_id=None, child_id=None, min_count=0, max_count=0, **kwargs):
+    try:
+        detail_ref = session.query(models.DetailLink).filter(
+            models.DetailLink.child_id == child_id,
+            models.DetailLink.parent_id == parent_id
+        ).first()
+        if detail_ref is None:
+            raise DetailNotFoundException()
+        session.delete(detail_ref)
+        session.commit()
+    finally:
+        session.rollback()
+
+
+def _get_assembly_tree_internal(session, parent_id=None):
     result = []
     try:
         for child in session.query(
@@ -95,11 +111,18 @@ def get_assembly_tree(session, parent_id=None):
         ).all():
             tmp_id = child.id  # strange ugly hack
             child_dict = child.get_dict_fields()
-            child_dict['children'] = get_assembly_tree(session, parent_id=child.id)
+            child_dict['children'] = _get_assembly_tree_internal(session, parent_id=child.id)
             result.append(child_dict)
         return result
     finally:
         session.rollback()
+
+
+@permissions.check_permissions
+def get_assembly_tree(session, parent_id=None):
+    detail_dict = get_detail_by_id(session, parent_id)
+    detail_dict['children'] = _get_assembly_tree_internal(session, parent_id=parent_id)
+    return detail_dict
 
 
 @permissions.check_permissions
@@ -121,6 +144,31 @@ def get_list(session, results_per_page=20, page=1, simple_filter=None, filter=No
         for detail in q.offset(
             (page-1)*results_per_page
         ).limit(results_per_page):
+            result['data'].append(detail.get_dict_fields())
+        return result
+    finally:
+        session.rollback()
+
+
+@permissions.check_permissions
+def get_assembly_list(session, results_per_page=20, page=1, simple_filter=None, filter=None):
+    result = {}
+    try:
+        q = session.query(models.Detail).join(
+            models.DetailLink,
+            models.DetailLink.parent_id == models.Detail.id).distinct()
+        if simple_filter is not None:
+            simple_filter = '%'+simple_filter+'%'
+            q = q.filter(or_(models.Detail.code.like(simple_filter),
+                         models.Detail.name.like(simple_filter),
+                         models.Detail.description.like(simple_filter)))
+        total_count = q.count()
+        total_pages = int(total_count/results_per_page)+1
+        result['total_count'] = total_count
+        result['total_pages'] = total_pages
+        result['data'] = []
+
+        for detail in q.offset((page-1)*results_per_page).limit(results_per_page):
             result['data'].append(detail.get_dict_fields())
         return result
     finally:

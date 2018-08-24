@@ -18,6 +18,9 @@ Vue.component('view-details', {
             detail_filter: this.detail_filter
         }
     },
+    props: {
+        userinfo : {}
+    },
     mounted: function(){
         var self = this;
         window.addEventListener("dragenter", function (e) {
@@ -37,16 +40,27 @@ Vue.component('view-details', {
         window.addEventListener("drop", function (e) {
             e.preventDefault();
             var files = e.dataTransfer.files;
-            console.log("Drop files:", files);
-
-            for (var file of files){
-                self.uploadFile(file);
-                self.files_to_upload.push(file);
+            if (self.current_detail.id!=undefined){
+                for (var file of files){
+                    self.uploadFile(file);
+                }
+            } else {
+                self.messages.push({
+                    text: 'Сохраните деталь для появления возможности добавления файлов'
+                })
             }
         });
         this.loadData()
     },
     methods: {
+        havePermission: function(name){
+            if ((this.userinfo==undefined) || (this.userinfo.user_permissions == undefined)){
+                return false
+            } else {
+                return this.userinfo.user_permissions.indexOf(name)>=0
+            }
+
+        },
         uploadFile: function(file){
             let formData = new FormData();
             formData.append(file.name, file);

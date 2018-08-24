@@ -3,7 +3,7 @@ var api_base_url='/api';
 function api_url(url_elements, parameters={}){
     let url = api_base_url+'/'+url_elements.join('/');
 
-    if (parameters!={}){
+    if (Object.keys(parameters).length>0){
         let param_pairs = [];
         for (let i in parameters){
             param_pairs.push(i+'='+parameters[i])

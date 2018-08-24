@@ -1,0 +1,163 @@
+<script type="text/javascript" src="/js/views/assembly.js">
+</script>
+<template id="assembly-item-template">
+    <div>
+        <div>
+            <span v-bind:class="{'btn-secondary': selected_assembly==assembly}" class="btn btn-sm" v-on:mousedown="clickSelect()">
+                <a  v-on:click="expanded=!expanded" ><i class="fa-fw" v-bind:class="[plusClassObject]"></i></a>
+                <span
+
+                >
+                    {{ assembly.code }} ({{ assembly.name }})
+                </span>
+            </span>
+        </div>
+        <div style="margin-left: 2rem" v-show="expanded">
+                <assembly-item v-for="child in assembly.children"
+                        v-bind:assembly="child"
+                        v-bind:selected_assembly="selected_assembly"
+                        v-on:select="selectChild"
+                ></assembly-item>
+        </div>
+    </div>
+</template>
+<template id="view-assembly-template">
+<div class="h-100">
+   <div v-if="current_assembly==undefined">
+        <div>
+            <div class="row">
+                <span style="width: 1rem;"></span>
+                <a class="btn btn-outline-secondary" v-on:click="loadData()" title="Обновить список"><i class="fas fa-fw fa-sync-alt"></i>
+                </a>
+                <span style="width: 0.2rem;"></span>
+                <a class="btn btn-outline-secondary"
+                   v-on:click="createAssembly()"
+                   v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')"
+                   title="Создать сборку"
+                >
+                    <i class="fas fa-fw fa-plus">
+
+                    </i>
+                </a>
+                <span style="width: 0.2rem;"></span>
+                <input class="form-control form-inline" style="max-width: 20rem" placeholder="Фильтр" v-model="assembly_filter" v-on:input="loadData">
+
+            </div>
+        </div>
+        <div style="height:1rem"></div>
+        <table class="table table-bordered table-sm">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Шифр детали</th>
+                <th>Наименование</th>
+                <th>Описание</th>
+                <th>Стандартное изделие</th>
+                <th></th>
+            </tr>
+
+            </thead>
+            <tbody>
+                <tr v-for="assembly in assembly">
+                    <td><input type="checkbox" v-model="assembly._checked"></td>
+                    <td>{{ assembly.code }}</td>
+                    <td>{{ assembly.name }}</td>
+                    <td>{{ assembly.description }}</td>
+                    <td><input type="checkbox" class="form-check-inline" v-model="assembly.is_standard"></td>
+                    <td>
+                        <a class="btn btn-outline-secondary btn-sm" v-on:click="editAssembly(assembly)">
+                            <i class="far fa-fw fa-edit">
+
+                            </i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div v-else class="h-100">
+        <div class="row h-100" style="padding-bottom: 1rem">
+            <div class="col-4 h-100">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <button class="btn btn-outline-dark btn-sm"
+                                title="Вернуться"
+                                v-on:click="current_assembly=undefined">
+                            <i class="fas fa-fw fa-arrow-left"></i>
+                        </button>
+                        <button class="btn btn-outline-dark btn-sm"
+                                v-on:click="details_list_visible=!details_list_visible"
+                                v-bind:class="{active: details_list_visible}"
+                        >
+                            <i title="Показать список деталей" class="fas fa-fw fa-cogs">
+                            </i>
+                        </button>
+
+                    </div>
+                    <div class="card-body">
+
+                         <assembly-item v-bind:assembly="current_assembly" v-on:select="selectItem" v-bind:selected_assembly="selected_assembly"></assembly-item>
+                    </div>
+                </div>
+            </div>
+            <div class="col h-100" style="padding-left: 0">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div v-if="details_list_visible">
+                            <input class="form-control form-inline" style="max-width: 20rem" placeholder="Фильтр" v-model="detail_filter" v-on:input="loadDetails">
+                            <div style="height:1rem"></div>
+                            <table>
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Шифр детали</th>
+                                        <th>Наименование</th>
+                                        <th>Описание</th>
+                                        <th></th>
+                                    </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="detail in details">
+                                            <td><input type="checkbox" v-model="detail._checked"></td>
+                                            <td>{{ detail.code }}</td>
+                                            <td>{{ detail.name }}</td>
+                                            <td>{{ detail.description }}</td>
+                                            <td>
+                                                <a class="btn btn-outline-secondary btn-sm" v-on:click="addDetailToAssembly(detail)">
+                                                    <i class="fas fa-fw fa-plus">
+
+                                                    </i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </table>
+                        </div>
+                        <div v-else>
+                            <div v-if="selected_assembly!=undefined">
+                                <div><span>Шифр детали: </span><span class="form-control">{{ selected_assembly.code }}</span></div>
+                                <div><span>Наименование: </span><span class="form-control">{{ selected_assembly.name }}</span></div>
+                                <div>
+                                    <div>Описание: </div>
+                                    <div class="form-control">{{ selected_assembly.description }}</div>
+                                </div>
+                                <div>
+                                    <div>Прикреплённые файлы:</div>
+                                    <div v-for="file in selected_assembly.files">
+                                        <a v-bind:href="'/api/details/' + selected_assembly.id + '/files/' + file.name">{{ file.name }}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</template>
