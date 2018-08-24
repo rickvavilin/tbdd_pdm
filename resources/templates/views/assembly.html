@@ -35,7 +35,7 @@
                             <i title="Показать подробную информацию о детали" class="fas fa-fw fa-cogs">
                             </i>
                         </button>
-                        <span v-if="havePermission('tbdd_pdm_core.api.assembly.add_detail_to_assembly')">
+                        <span v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')">
                             <button class="btn btn-outline-dark btn-sm"
                                     title="Уменьшить количество или убрать деталь из сборки"
                                     v-if="selected_assembly!=undefined && selected_assembly.level==1"
@@ -86,11 +86,11 @@
                                             <td><input type="checkbox" v-model="detail._checked"></td>
                                             <td>{{ detail.code }}</td>
                                             <td>{{ detail.name }}</td>
-                                            <td>{{ detail.description }}</td>
-                                            <td>
+                                            <td class="text-truncate" style="max-width: 20rem" v-bind:title="detail.description">{{ detail.description }}</td>
+                                            <td style="min-width: 5.5rem">
                                                 <a class="btn btn-outline-secondary btn-sm"
                                                    title="Добавить деталь в текущую сборку"
-                                                   v-if="havePermission('tbdd_pdm_core.api.assembly.add_detail_to_assembly')"
+                                                   v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')"
                                                    v-on:click="addDetailToAssembly(detail)">
                                                     <i class="fas fa-fw fa-plus">
 
