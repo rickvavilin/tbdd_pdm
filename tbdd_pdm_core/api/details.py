@@ -170,7 +170,10 @@ def calculate_bom(session, parent_id=None):
     tree = get_assembly_tree(session, parent_id, use_count_multiplier=True)
     bom = {}
     _calculate_bom(tree, bom, add_self=False)
-    return bom
+    result = []
+    for k,v in bom.items():
+        result.append(v)
+    return result
 
 
 @permissions.check_permissions
