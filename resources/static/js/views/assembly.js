@@ -27,11 +27,9 @@ Vue.component('view-assembly', {
     template: '#view-assembly-template',
     data: function () {
         return {
-            assembly: this.assembly==undefined ? [] : this.assembly,
-            assembly_filter: "",
             current_assembly: undefined,
             selected_assembly: undefined,
-            details_list_visible: this.details_list_visible,
+            detail_info_visible: this.detail_info_visible==undefined ? false: this.detail_info_visible,
             details: this.details==undefined ? [] : this.details,
             detail_filter: ""
         }
@@ -83,7 +81,18 @@ Vue.component('view-assembly', {
             )
         },
         addDetailToAssembly: function (detail) {
-            api_fetch_json([])
+            api_fetch_json(['assembly', 'add', this.current_assembly.id, detail.id], {}).then(
+                (data) => {
+                    this.editAssembly(this.current_assembly)
+                }
+            )
+        },
+        removeCurrentDetailFromAssembly: function(){
+            api_fetch_json(['assembly', 'remove', this.current_assembly.id, this.selected_assembly.id], {}).then(
+                (data) => {
+                    this.editAssembly(this.current_assembly)
+                }
+            )
         },
         selectItem: function(data){
             console.log(data);

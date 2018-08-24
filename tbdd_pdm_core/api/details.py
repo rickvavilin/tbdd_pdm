@@ -98,7 +98,7 @@ def remove_detail_from_assembly(session, parent_id=None, child_id=None, min_coun
         session.rollback()
 
 
-def _get_assembly_tree_internal(session, parent_id=None):
+def _get_assembly_tree_internal(session, parent_id=None, level=0):
     result = []
     try:
         for child in session.query(
@@ -111,7 +111,8 @@ def _get_assembly_tree_internal(session, parent_id=None):
         ).all():
             tmp_id = child.id  # strange ugly hack
             child_dict = child.get_dict_fields()
-            child_dict['children'] = _get_assembly_tree_internal(session, parent_id=child.id)
+            child_dict['level'] = level+1
+            child_dict['children'] = _get_assembly_tree_internal(session, parent_id=child.id, level=level+1)
             result.append(child_dict)
         return result
     finally:
@@ -121,6 +122,7 @@ def _get_assembly_tree_internal(session, parent_id=None):
 @permissions.check_permissions
 def get_assembly_tree(session, parent_id=None):
     detail_dict = get_detail_by_id(session, parent_id)
+    detail_dict['level'] = 0
     detail_dict['children'] = _get_assembly_tree_internal(session, parent_id=parent_id)
     return detail_dict
 
