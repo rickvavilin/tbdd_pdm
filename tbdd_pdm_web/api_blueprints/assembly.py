@@ -27,11 +27,19 @@ def get_assembly_tree(parent_id):
                                     _current_user_login=session.get('login')))
 
 
-@node.route('/add/<int:parent_id>/<int:child_id>')
-def add_detail_to_assembly(parent_id, child_id):
-    return jsonify(details.add_detail_to_assembly(db.session, parent_id=parent_id, child_id=child_id))
+@node.route('/add/<int:parent_id>/<int:child_id>/<int:count>')
+def add_detail_to_assembly(parent_id, child_id, count):
+    if count < 1:
+        raise CountMustBeGreaterThanZeroException()
+    return jsonify(details.add_detail_to_assembly(db.session, parent_id=parent_id, child_id=child_id, count=count))
 
 
 @node.route('/remove/<int:parent_id>/<int:child_id>')
 def remove_detail_from_assembly(parent_id, child_id):
     return jsonify(details.remove_detail_from_assembly(db.session, parent_id=parent_id, child_id=child_id))
+
+
+@node.route('/bom/<int:parent_id>')
+def calculate_bom(parent_id):
+    return jsonify(details.calculate_bom(db.session, parent_id=parent_id))
+

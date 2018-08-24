@@ -44,8 +44,8 @@
                     <td><input type="checkbox" v-model="detail._checked"></td>
                     <td>{{ detail.code }}</td>
                     <td>{{ detail.name }}</td>
-                    <td>{{ detail.description }}</td>
-                    <td><input type="checkbox" class="form-check-inline" v-model="detail.is_standard"></td>
+                    <td class="text-truncate" style="max-width: 20rem" v-bind:title="detail.description">{{ detail.description }}</td>
+                    <td><input type="checkbox" disabled class="form-check-inline" v-model="detail.is_standard"></td>
                     <td>
                         <a class="btn btn-outline-secondary btn-sm" v-on:click="editDetail(detail)">
                             <i class="far fa-fw fa-edit">

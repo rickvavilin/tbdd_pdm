@@ -81,7 +81,7 @@ Vue.component('view-assembly', {
             )
         },
         addDetailToAssembly: function (detail) {
-            api_fetch_json(['assembly', 'add', this.current_assembly.id, detail.id], {}).then(
+            api_fetch_json(['assembly', 'add', this.current_assembly.id, detail.id, 1], {}).then(
                 (data) => {
                     this.editAssembly(this.current_assembly)
                 }

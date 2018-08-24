@@ -62,6 +62,7 @@ class DetailLink(Base):
     child_id = Column(Integer, ForeignKey(Detail.id), primary_key=True)
     min_count = Column(Integer)
     max_count = Column(Integer)
+    count = Column(Integer)
 
 
 class DetailFile(Base, DictMixin):

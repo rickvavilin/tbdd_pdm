@@ -50,3 +50,7 @@ class CycleLinkNotAllowedException(Exception):
 
 class ActionNotPermitted(Exception):
     pass
+
+
+class CountMustBeGreaterThanZeroException(Exception):
+    pass

@@ -6,9 +6,9 @@
             <span v-bind:class="{'btn-secondary': selected_assembly==assembly}" class="btn btn-sm" v-on:mousedown="clickSelect()">
                 <a  v-on:click="expanded=!expanded" ><i class="fa-fw" v-bind:class="[plusClassObject]"></i></a>
                 <span
-
+                    v-bind:title="assembly.code+' ('+assembly.name+')'"
                 >
-                    {{ assembly.code }} ({{ assembly.name }}) [{{ assembly.level }}]
+                    [{{ assembly.count }}] {{ assembly.code }} ({{ assembly.name }})
                 </span>
             </span>
         </div>
@@ -36,14 +36,20 @@
                             </i>
                         </button>
                         <button class="btn btn-outline-dark btn-sm"
-                                title="Убрать деталь из сборки"
+                                title="Уменьшить количество или убрать деталь из сборки"
                                 v-if="selected_assembly!=undefined && selected_assembly.level==1"
                                 v-on:click="removeCurrentDetailFromAssembly()">
                             <i class="fas fa-fw fa-minus"></i>
                         </button>
+                        <button class="btn btn-outline-dark btn-sm"
+                                title="Увеличить количество деталей в сборке"
+                                v-if="selected_assembly!=undefined && selected_assembly.level==1"
+                                v-on:click="addDetailToAssembly(selected_assembly)">
+                            <i class="fas fa-fw fa-plus"></i>
+                        </button>
 
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="overflow: scroll">
 
                          <assembly-item
                                  v-bind:assembly="current_assembly"

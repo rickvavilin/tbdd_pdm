@@ -67,15 +67,24 @@ def get_id_by_code(session, detail_code=None):
 
 
 @permissions.check_permissions
-def add_detail_to_assembly(session, parent_id=None, child_id=None, min_count=0, max_count=0, **kwargs):
+def add_detail_to_assembly(session, parent_id=None, child_id=None, min_count=0, max_count=0, count=1, **kwargs):
     try:
         if parent_id == child_id:
             raise CycleLinkNotAllowedException()
+
+        detail_ref = session.query(models.DetailLink).filter(models.DetailLink.parent_id == parent_id,
+                                                             models.DetailLink.child_id == child_id).first()
+
+        if detail_ref is not None:
+            detail_ref.count += count
+            session.commit()
+            return
         detail_ref = models.DetailLink(
             parent_id=parent_id,
             child_id=child_id,
             min_count=min_count,
-            max_count=max_count
+            max_count=max_count,
+            count=count
         )
         session.add(detail_ref)
         session.commit()
@@ -92,17 +101,21 @@ def remove_detail_from_assembly(session, parent_id=None, child_id=None, min_coun
         ).first()
         if detail_ref is None:
             raise DetailNotFoundException()
-        session.delete(detail_ref)
+        if detail_ref.count > 1:
+            detail_ref.count -= 1
+        else:
+            session.delete(detail_ref)
         session.commit()
     finally:
         session.rollback()
 
 
-def _get_assembly_tree_internal(session, parent_id=None, level=0):
+def _get_assembly_tree_internal(session, parent_id=None, level=0, count_multiplier=1, use_count_multiplier=False):
     result = []
     try:
-        for child in session.query(
-               models.Detail
+        for child, link in session.query(
+                models.Detail,
+                models.DetailLink
         ).outerjoin(
                 models.DetailLink,
                 models.DetailLink.child_id == models.Detail.id
@@ -112,7 +125,16 @@ def _get_assembly_tree_internal(session, parent_id=None, level=0):
             tmp_id = child.id  # strange ugly hack
             child_dict = child.get_dict_fields()
             child_dict['level'] = level+1
-            child_dict['children'] = _get_assembly_tree_internal(session, parent_id=child.id, level=level+1)
+            if use_count_multiplier:
+                count_mul = link.count
+            else:
+                count_mul = 1
+            child_dict['children'] = _get_assembly_tree_internal(session,
+                                                                 parent_id=child.id,
+                                                                 level=level+1,
+                                                                 count_multiplier=count_mul,
+                                                                 use_count_multiplier=use_count_multiplier)
+            child_dict['count'] = link.count*count_multiplier
             result.append(child_dict)
         return result
     finally:
@@ -120,11 +142,33 @@ def _get_assembly_tree_internal(session, parent_id=None, level=0):
 
 
 @permissions.check_permissions
-def get_assembly_tree(session, parent_id=None):
+def get_assembly_tree(session, parent_id=None, use_count_multiplier=False):
     detail_dict = get_detail_by_id(session, parent_id)
     detail_dict['level'] = 0
-    detail_dict['children'] = _get_assembly_tree_internal(session, parent_id=parent_id)
+    detail_dict['count'] = 1
+    detail_dict['children'] = _get_assembly_tree_internal(session,
+                                                          parent_id=parent_id,
+                                                          use_count_multiplier=use_count_multiplier)
     return detail_dict
+
+
+def _calculate_bom(item, bom=None):
+    if item['id'] in bom:
+        bom[item['id']]['count'] = bom[item['id']]['count'] + item['count']
+    else:
+        bom[item['id']] = {
+            "item": item,
+            "count": item['count']
+        }
+    for child in item['children']:
+        _calculate_bom(child, bom)
+
+
+def calculate_bom(session, parent_id=None):
+    tree = get_assembly_tree(session, parent_id, use_count_multiplier=True)
+    bom = {}
+    _calculate_bom(tree, bom)
+    return bom
 
 
 @permissions.check_permissions
