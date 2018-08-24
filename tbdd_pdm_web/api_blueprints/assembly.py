@@ -1,8 +1,11 @@
-__author__ = 'Aleksandr Vavilin'
-
+import csv
 from flask import Blueprint, render_template, request, Response, current_app, session, jsonify
 import flask_sqlalchemy
+import io
 from tbdd_pdm_core.api import details, files, exceptions
+__author__ = 'Aleksandr Vavilin'
+
+
 
 db = flask_sqlalchemy.SQLAlchemy(current_app)
 
@@ -41,5 +44,13 @@ def remove_detail_from_assembly(parent_id, child_id):
 
 @node.route('/bom/<int:parent_id>')
 def calculate_bom(parent_id):
-    return jsonify(details.calculate_bom(db.session, parent_id=parent_id))
+    bom = details.calculate_bom(db.session, parent_id=parent_id)
+    strio = io.StringIO()
+    writer = csv.writer(strio)
+    for b in bom:
+        writer.writerow([b['item']['code'], b['item']['name'], b['item']['description'], b['count']])
+    strio.seek(0)
+    response = Response(strio.read())
+    response.headers.set('Content-disposition', 'attachment', filename='out.csv')
+    return response
 

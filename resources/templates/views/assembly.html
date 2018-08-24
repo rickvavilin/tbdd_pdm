@@ -35,23 +35,26 @@
                             <i title="Показать подробную информацию о детали" class="fas fa-fw fa-cogs">
                             </i>
                         </button>
-                        <button class="btn btn-outline-dark btn-sm"
-                                title="Уменьшить количество или убрать деталь из сборки"
-                                v-if="selected_assembly!=undefined && selected_assembly.level==1"
-                                v-on:click="removeCurrentDetailFromAssembly()">
-                            <i class="fas fa-fw fa-minus"></i>
-                        </button>
-                        <button class="btn btn-outline-dark btn-sm"
-                                title="Увеличить количество деталей в сборке"
-                                v-if="selected_assembly!=undefined && selected_assembly.level==1"
-                                v-on:click="addDetailToAssembly(selected_assembly)">
-                            <i class="fas fa-fw fa-plus"></i>
-                        </button>
+                        <span v-if="havePermission('tbdd_pdm_core.api.assembly.add_detail_to_assembly')">
+                            <button class="btn btn-outline-dark btn-sm"
+                                    title="Уменьшить количество или убрать деталь из сборки"
+                                    v-if="selected_assembly!=undefined && selected_assembly.level==1"
+                                    v-on:click="removeCurrentDetailFromAssembly()">
+                                <i class="fas fa-fw fa-minus"></i>
+                            </button>
+                            <button class="btn btn-outline-dark btn-sm"
+                                    title="Увеличить количество деталей в сборке"
+                                    v-if="selected_assembly!=undefined && selected_assembly.level==1"
+                                    v-on:click="addDetailToAssembly(selected_assembly)">
+                                <i class="fas fa-fw fa-plus"></i>
+                            </button>
+                        </span>
 
                     </div>
                     <div class="card-body" style="overflow: scroll">
 
                          <assembly-item
+                                 v-if="current_assembly!=undefined"
                                  v-bind:assembly="current_assembly"
                                  v-bind:selected_assembly="selected_assembly"
                                  v-on:select="selectItem">
@@ -87,6 +90,7 @@
                                             <td>
                                                 <a class="btn btn-outline-secondary btn-sm"
                                                    title="Добавить деталь в текущую сборку"
+                                                   v-if="havePermission('tbdd_pdm_core.api.assembly.add_detail_to_assembly')"
                                                    v-on:click="addDetailToAssembly(detail)">
                                                     <i class="fas fa-fw fa-plus">
 
