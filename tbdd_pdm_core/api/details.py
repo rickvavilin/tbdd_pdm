@@ -135,6 +135,7 @@ def _get_assembly_tree_internal(session, parent_id=None, level=0, count_multipli
                                                                  count_multiplier=count_mul,
                                                                  use_count_multiplier=use_count_multiplier)
             child_dict['count'] = link.count*count_multiplier
+            child_dict['files'] = _get_detail_files(session, child.id)
             result.append(child_dict)
         return result
     finally:
@@ -226,16 +227,21 @@ def get_assembly_list(session, results_per_page=20, page=1, simple_filter=None, 
         session.rollback()
 
 
+def _get_detail_files(session, detail_id=None):
+    detail_files = []
+    for detail_file in session.query(models.DetailFile).filter(models.DetailFile.detail_id == detail_id).all():
+        detail_files.append(detail_file.get_dict_fields())
+    return detail_files
+
+
 @permissions.check_permissions
 def get_detail_by_id(session, detail_id=None):
     detail = session.query(models.Detail).filter(models.Detail.id == detail_id).first()
     if detail is None:
         raise DetailNotFoundException
     detail_dict = detail.get_dict_fields()
-    detail_files = []
-    for detail_file in session.query(models.DetailFile).filter(models.DetailFile.detail_id == detail.id).all():
-        detail_files.append(detail_file.get_dict_fields())
-    detail_dict['files'] = detail_files
+
+    detail_dict['files'] = _get_detail_files(session, detail.id)
     return detail_dict
 
 
