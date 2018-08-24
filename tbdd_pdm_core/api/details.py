@@ -152,22 +152,24 @@ def get_assembly_tree(session, parent_id=None, use_count_multiplier=False):
     return detail_dict
 
 
-def _calculate_bom(item, bom=None):
-    if item['id'] in bom:
-        bom[item['id']]['count'] = bom[item['id']]['count'] + item['count']
-    else:
-        bom[item['id']] = {
-            "item": item,
-            "count": item['count']
-        }
+def _calculate_bom(item, bom=None, add_self=True):
+    if add_self or len(item['children']) == 0:
+        if item['id'] in bom:
+            bom[item['id']]['count'] = bom[item['id']]['count'] + item['count']
+        else:
+            bom[item['id']] = {
+                "item": item,
+                "count": item['count']
+            }
     for child in item['children']:
-        _calculate_bom(child, bom)
+        _calculate_bom(child, bom, add_self=add_self)
+    del item['children']
 
 
 def calculate_bom(session, parent_id=None):
     tree = get_assembly_tree(session, parent_id, use_count_multiplier=True)
     bom = {}
-    _calculate_bom(tree, bom)
+    _calculate_bom(tree, bom, add_self=False)
     return bom
 
 
