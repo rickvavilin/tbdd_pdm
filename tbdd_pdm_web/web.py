@@ -3,7 +3,7 @@ from flask import Flask, render_template
 import flask_sqlalchemy
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-
+from tbdd_pdm_core.api import exceptions
 from .api_blueprints import register_api_blueprints
 
 
@@ -25,6 +25,11 @@ app = CustomFlask(__name__, template_folder='../resources/templates', static_fol
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///test_web.db'
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 db = flask_sqlalchemy.SQLAlchemy(app)
+
+
+@app.errorhandler(exceptions.ActionNotPermitted)
+def _(error):
+    return 'Access Forbidden', 403
 
 
 @app.route('/')

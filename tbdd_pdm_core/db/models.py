@@ -36,6 +36,15 @@ class UsersGroupsRel(Base):
     group_id = Column(Integer, ForeignKey(Group.id), primary_key=True)
 
 
+class GroupPermissions(Base):
+    __tablename__ = 'group_permissions'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    group_id = Column(Integer, ForeignKey(Group.id))
+    function_name = Column(String)
+    allowed = Column(Boolean)
+    UniqueConstraint('group_id', 'function_name')
+
+
 class Detail(Base, DictMixin):
     __tablename__ = 'details'
     id = Column(Integer, primary_key=True, autoincrement=True)

@@ -2,9 +2,11 @@ __author__ = 'Aleksandr Vavilin'
 from ..db import models
 from hashlib import sha256
 from .exceptions import *
+from . import permissions
 import sqlalchemy.exc
 
 
+@permissions.check_permissions
 def create_user(session, login=None, password=None, **kwargs):
     try:
         try:
@@ -16,6 +18,7 @@ def create_user(session, login=None, password=None, **kwargs):
         session.rollback()
 
 
+@permissions.check_permissions
 def delete_user(session, login=None, **kwargs):
     try:
         user = session.query(models.User).filter(models.User.login == login).first()

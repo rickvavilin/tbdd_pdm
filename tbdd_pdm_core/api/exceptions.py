@@ -43,5 +43,10 @@ class GroupAlreadyExistsException(Exception):
 class GroupNotEmptyException(Exception):
     pass
 
+
 class CycleLinkNotAllowedException(Exception):
+    pass
+
+
+class ActionNotPermitted(Exception):
     pass

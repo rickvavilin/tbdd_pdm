@@ -2,8 +2,10 @@ __author__ = 'Aleksandr Vavilin'
 from ..db import models
 from .exceptions import *
 import sqlalchemy.exc
+from .permissions import check_permissions
 
 
+@check_permissions
 def create_group(session, name=None, **kwargs):
     try:
         group = models.Group(name=name)
@@ -16,6 +18,7 @@ def create_group(session, name=None, **kwargs):
         session.rollback()
 
 
+@check_permissions
 def delete_group(session, name=None, **kwargs):
     try:
         try:
@@ -30,6 +33,7 @@ def delete_group(session, name=None, **kwargs):
         session.rollback()
 
 
+@check_permissions
 def add_user_to_group(session, group_name=None, user_login=None, **kwargs):
     try:
         group = session.query(models.Group).filter(models.Group.name == group_name).first()
@@ -45,6 +49,7 @@ def add_user_to_group(session, group_name=None, user_login=None, **kwargs):
         session.rollback()
 
 
+@check_permissions
 def remove_user_from_group(session, group_name=None, user_login=None, **kwargs):
     try:
         group = session.query(models.Group).filter(models.Group.name == group_name).first()
@@ -57,6 +62,19 @@ def remove_user_from_group(session, group_name=None, user_login=None, **kwargs):
         if user_group_rel:
             session.delete(user_group_rel)
             session.commit()
+    finally:
+        session.rollback()
+
+
+@check_permissions
+def add_permission_to_group(session, group_name=None, function_name=None, **kwargs):
+    try:
+        group = session.query(models.Group).filter(models.Group.name == group_name).first()
+        if group is None:
+            raise GroupNotFoundException(group)
+        group_permissions = models.GroupPermissions(group_id=group.id, function_name=function_name, allowed=True)
+        session.add(group_permissions)
+        session.commit()
     finally:
         session.rollback()
 

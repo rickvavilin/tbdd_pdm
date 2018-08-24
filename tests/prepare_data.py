@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from tbdd_pdm_core.db import init_schema
-from tbdd_pdm_core.api import details, users, exceptions
+from tbdd_pdm_core.api import details, users, groups, exceptions, permissions
 import pprint
 
 
@@ -22,8 +22,17 @@ def session():
     yield _s
     _s.close()
 
+
 def test_create_user(session):
     users.create_user(session, 'admin', 'password')
+    users.create_user(session, 'user', '1')
+    groups.create_group(session, 'administrators')
+    groups.create_group(session, 'users')
+    groups.create_group(session, 'secondary')
+    groups.add_user_to_group(session, group_name='administrators', user_login='admin')
+    groups.add_user_to_group(session, group_name='secondary', user_login='admin')
+    groups.add_user_to_group(session, group_name='users', user_login='user')
+
 
 def test_create_details(session):
     details.create_detail(session, code='D001', name='detail 1', description='detail 1 description')
@@ -52,3 +61,10 @@ def test_cycle_link(session):
 
 def test_get_tree(session):
     pprint.pprint(details.get_assembly_tree(session, details.get_id_by_code(session, 'D001')))
+
+
+def test_create_admin_permissions(session):
+    for p in permissions.default_admin_permissions:
+        groups.add_permission_to_group(session,
+                                       group_name='administrators',
+                                       function_name=p)

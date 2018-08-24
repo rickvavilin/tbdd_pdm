@@ -1,15 +1,17 @@
 from ..db import models
 import os
 from .exceptions import *
-import sqlalchemy.exc
+from . import permissions
 __author__ = 'Aleksandr Vavilin'
 STORAGE_PATH = 'files'
 
 
+@permissions.check_permissions
 def _get_full_file_name(detail, detail_file):
     return os.path.join(STORAGE_PATH, detail.code.replace('/', '-'), detail_file.name)
 
 
+@permissions.check_permissions
 def add_file_to_detail(session, detail_id=None, filename=None, filedata=None, **kwargs):
     detail = session.query(models.Detail).filter(models.Detail.id == detail_id).first()
     if detail is None:
@@ -29,6 +31,7 @@ def add_file_to_detail(session, detail_id=None, filename=None, filedata=None, **
         session.rollback()
 
 
+@permissions.check_permissions
 def get_file_data(session, file_id=None, **kwargs):
     try:
         detail_file, detail = session.query(models.DetailFile, models.Detail).join(models.Detail).filter(models.DetailFile.id == file_id).first()
@@ -53,6 +56,7 @@ def get_file_data_by_detail_and_name(session, detail_id=None, filename=None, **k
         session.rollback()
 
 
+@permissions.check_permissions
 def delete_file_by_detail_and_name(session, detail_id=None, filename=None, **kwargs):
     try:
         detail_file, detail = session.query(models.DetailFile, models.Detail).join(models.Detail).filter(

@@ -1,10 +1,12 @@
 from ..db import models
 from .exceptions import *
+from . import permissions
 import sqlalchemy.exc
 from sqlalchemy import or_
 __author__ = 'Aleksandr Vavilin'
 
 
+@permissions.check_permissions
 def create_detail(session, code=None, name=None, description=None, is_standard=False, **kwargs):
     try:
         try:
@@ -24,6 +26,7 @@ def create_detail(session, code=None, name=None, description=None, is_standard=F
         session.rollback()
 
 
+@permissions.check_permissions
 def update_detail(session, id=None, name=None, description=None, is_standard=False, **kwargs):
     try:
         detail = session.query(models.Detail).filter(models.Detail.id == id).first()
@@ -34,11 +37,12 @@ def update_detail(session, id=None, name=None, description=None, is_standard=Fal
         detail.is_standard = is_standard
         session.commit()
         tmp_id = detail.id
-        return detail.get_dict_fields()
+        return get_detail_by_id(session, detail_id=detail.id)
     finally:
         session.rollback()
 
 
+@permissions.check_permissions
 def delete_detail(session, detail_id=None, **kwargs):
     try:
         detail = session.query(models.Detail).filter(models.Detail.id == detail_id).first()
@@ -60,6 +64,7 @@ def get_id_by_code(session, detail_code=None):
         session.rollback()
 
 
+@permissions.check_permissions
 def add_detail_to_assembly(session, parent_id=None, child_id=None, min_count=0, max_count=0, **kwargs):
     try:
         if parent_id == child_id:
@@ -76,6 +81,7 @@ def add_detail_to_assembly(session, parent_id=None, child_id=None, min_count=0, 
         session.rollback()
 
 
+@permissions.check_permissions
 def get_assembly_tree(session, parent_id=None):
     result = []
     try:
@@ -96,6 +102,7 @@ def get_assembly_tree(session, parent_id=None):
         session.rollback()
 
 
+@permissions.check_permissions
 def get_list(session, results_per_page=20, page=1, simple_filter=None, filter=None):
     result = {}
     try:
@@ -120,6 +127,7 @@ def get_list(session, results_per_page=20, page=1, simple_filter=None, filter=No
         session.rollback()
 
 
+@permissions.check_permissions
 def get_detail_by_id(session, detail_id=None):
     detail = session.query(models.Detail).filter(models.Detail.id == detail_id).first()
     if detail is None:
