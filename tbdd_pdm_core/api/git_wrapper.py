@@ -36,3 +36,15 @@ def gelete_file(path, git_root_path=None, committer_name=None, committer_email=N
         raise Exception(stdout+stderr)
 
 
+def get_file_history(path, git_root_path=None):
+    env = os.environ
+    env['GIT_DIR'] = os.path.join(git_root_path, '.git')
+    env['GIT_WORK_TREE'] = git_root_path
+    p = subprocess.Popen(['git', 'log', '--pretty=format:%h|%an|%ad|%s', '--', path], env=env, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    if p.returncode != 0:
+        raise Exception(stderr)
+    stdout = stdout.decode('utf8')
+    print([l.split('|') for l in stdout.split('\n')])
+
+

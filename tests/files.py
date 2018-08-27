@@ -5,7 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from tbdd_pdm_core.db import init_schema
 from tbdd_pdm_core.api import details, files, exceptions
-import pprint
 
 
 @pytest.yield_fixture(scope='module')
