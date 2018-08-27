@@ -10,7 +10,7 @@ STORAGE_PATH = 'files'
 
 @permissions.check_permissions
 def _get_full_file_name(detail, detail_file):
-    return os.path.join(STORAGE_PATH, detail.code.replace('/', '-'), detail_file.name)
+    return os.path.join(os.path.abspath(STORAGE_PATH), detail.code.replace('/', '-'), detail_file.name)
 
 
 @permissions.check_permissions
@@ -21,18 +21,18 @@ def add_file_to_detail(session, detail_id=None, filename=None, filedata=None, us
     detail_file = models.DetailFile(detail_id=detail_id, name=filename)
     try:
         full_file_name = _get_full_file_name(detail, detail_file)
-        if os.path.exists(full_file_name):
-            raise FileAlreadyExistsException('{0} {1}'.format(detail_id, filename))
+        if not os.path.exists(full_file_name):
+            session.add(detail_file)
 
-        session.add(detail_file)
         os.makedirs(os.path.dirname(full_file_name), exist_ok=True)
         with open(full_file_name, 'wb') as f:
             f.write(filedata)
         session.commit()
         git_wrapper.add_file(full_file_name,
+                             git_root_path=os.path.abspath(STORAGE_PATH),
                              committer_name=user_login,
                              committer_email='test@example.org',
-                             comment='added')
+                             comment='added  {} {}'.format(detail.code, filename))
 
     finally:
         session.rollback()
@@ -84,7 +84,10 @@ def delete_file_by_detail_and_name(session, detail_id=None, filename=None, user_
         if os.path.exists(full_file_name):
             os.rename(full_file_name+'.deleted', full_file_name)
             os.unlink(full_file_name)
-            git_wrapper.gelete_file(full_file_name, committer_name=user_login, committer_email='tets@example.com', comment='deleted')
-
+            git_wrapper.gelete_file(full_file_name,
+                                    git_root_path=os.path.abspath(STORAGE_PATH),
+                                    committer_name=user_login,
+                                    committer_email='tets@example.com',
+                                    comment='deleted {} {}'.format(detail.code, filename))
     finally:
         session.rollback()
