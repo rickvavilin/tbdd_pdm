@@ -1,7 +1,9 @@
 from ..db import models
 import os
+import subprocess
 from .exceptions import *
 from . import permissions
+from . import git_wrapper
 __author__ = 'Aleksandr Vavilin'
 STORAGE_PATH = 'files'
 
@@ -12,7 +14,7 @@ def _get_full_file_name(detail, detail_file):
 
 
 @permissions.check_permissions
-def add_file_to_detail(session, detail_id=None, filename=None, filedata=None, **kwargs):
+def add_file_to_detail(session, detail_id=None, filename=None, filedata=None, user_login=None, **kwargs):
     detail = session.query(models.Detail).filter(models.Detail.id == detail_id).first()
     if detail is None:
         raise DetailNotFoundException(detail_id)
@@ -27,6 +29,11 @@ def add_file_to_detail(session, detail_id=None, filename=None, filedata=None, **
         with open(full_file_name, 'wb') as f:
             f.write(filedata)
         session.commit()
+        git_wrapper.add_file(full_file_name,
+                             committer_name=user_login,
+                             committer_email='test@example.org',
+                             comment='added')
+
     finally:
         session.rollback()
 
@@ -57,7 +64,7 @@ def get_file_data_by_detail_and_name(session, detail_id=None, filename=None, **k
 
 
 @permissions.check_permissions
-def delete_file_by_detail_and_name(session, detail_id=None, filename=None, **kwargs):
+def delete_file_by_detail_and_name(session, detail_id=None, filename=None, user_login=None, **kwargs):
     try:
         detail_file, detail = session.query(models.DetailFile, models.Detail).join(models.Detail).filter(
             models.DetailFile.detail_id == detail_id, models.DetailFile.name == filename
@@ -75,6 +82,9 @@ def delete_file_by_detail_and_name(session, detail_id=None, filename=None, **kwa
                 os.rename(full_file_name+'.deleted', full_file_name)
             raise
         if os.path.exists(full_file_name):
-            os.unlink(full_file_name+'.deleted')
+            os.rename(full_file_name+'.deleted', full_file_name)
+            os.unlink(full_file_name)
+            git_wrapper.gelete_file(full_file_name, committer_name=user_login, committer_email='tets@example.com', comment='deleted')
+
     finally:
         session.rollback()

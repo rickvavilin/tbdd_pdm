@@ -33,7 +33,7 @@ def get_assembly_tree(parent_id):
 @node.route('/add/<int:parent_id>/<int:child_id>/<int:count>')
 def add_detail_to_assembly(parent_id, child_id, count):
     if count < 1:
-        raise CountMustBeGreaterThanZeroException()
+        raise exceptions.CountMustBeGreaterThanZeroException()
     return jsonify(details.add_detail_to_assembly(db.session, parent_id=parent_id, child_id=child_id, count=count))
 
 

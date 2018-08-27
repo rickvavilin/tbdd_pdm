@@ -52,6 +52,7 @@ def add_files_to_detail(detail_id):
                                      detail_id=detail_id,
                                      filename=filename,
                                      filedata=file.read(),
+                                     user_login=session.get('login'),
                                      _current_user_login=session.get('login'))
         except exceptions.FileAlreadyExistsException:
             return jsonify({'result': 'Файл уже существует: {}'.format(filename)}), 400
@@ -75,6 +76,7 @@ def process_file_from_detail(detail_id, filename):
         files.delete_file_by_detail_and_name(db.session,
                                              detail_id=detail_id,
                                              filename=filename,
+                                             user_login=session.get('login'),
                                              _current_user_login=session.get('login'))
         return jsonify({'result': 'OK'})
 
