@@ -28,5 +28,5 @@ if __name__=='__main__':
         license='',
         author='Aleksandr Vavilin',
         author_email='vavilin@tbdd.ru',
-        description='Simple PDM for TBDD internal use',
+        description='Simple PDM for TBDD internal use', requires=['sqlalchemy', 'flask']
     )

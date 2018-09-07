@@ -1,6 +1,0 @@
-#!/usr/bin/python3
-import sys
-from tbdd_pdm_core.db import init_schema
-
-if __name__ == '__main__':
-    init_schema.init_schema(sys.argv[1])

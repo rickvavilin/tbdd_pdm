@@ -20,37 +20,37 @@ class DictMixin(object):
 class User(Base, DictMixin):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    login = Column(String, unique=True)
-    password_hash = Column(String)
+    login = Column(String(50), unique=True, index=True)
+    password_hash = Column(String(255))
 
 
 class Group(Base, DictMixin):
     __tablename__ = 'groups'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, unique=True)
+    name = Column(String(100), unique=True, index=True)
 
 
 class UsersGroupsRel(Base):
     __tablename__ = 'users_groups_rel'
-    user_id = Column(Integer, ForeignKey(User.id, ondelete='CASCADE'), primary_key=True)
-    group_id = Column(Integer, ForeignKey(Group.id), primary_key=True)
+    user_id = Column(Integer, ForeignKey(User.id, ondelete='CASCADE'), primary_key=True, index=True)
+    group_id = Column(Integer, ForeignKey(Group.id), primary_key=True, index=True)
 
 
 class GroupPermissions(Base):
     __tablename__ = 'group_permissions'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    group_id = Column(Integer, ForeignKey(Group.id))
-    function_name = Column(String)
-    allowed = Column(Boolean)
+    group_id = Column(Integer, ForeignKey(Group.id), index=True)
+    function_name = Column(String(255), index=True)
+    allowed = Column(Boolean, index=True)
     UniqueConstraint('group_id', 'function_name')
 
 
 class Detail(Base, DictMixin):
     __tablename__ = 'details'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    code = Column(String, unique=True)
-    name = Column(String)
-    description = Column(String)
+    code = Column(String(50), unique=True, index=True)
+    name = Column(String(255), index=True)
+    description = Column(Text)
     is_standard = Column(Boolean)
     read_group_id = Column(Integer, ForeignKey(Group.id))
     write_group_id = Column(Integer, ForeignKey(Group.id))
@@ -68,6 +68,6 @@ class DetailLink(Base):
 class DetailFile(Base, DictMixin):
     __tablename__ = 'detail_files'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    detail_id = Column(Integer, ForeignKey(Detail.id))
+    name = Column(Text)
+    detail_id = Column(Integer, ForeignKey(Detail.id), index=True)
     UniqueConstraint('name', 'detail_id')

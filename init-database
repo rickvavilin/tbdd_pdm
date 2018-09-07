@@ -1,0 +1,34 @@
+#!/usr/bin/python3
+
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
+from tbdd_pdm_core.db import init_schema
+from tbdd_pdm_core.api import users, groups, permissions
+import argparse
+ADMIN_GROUP_NAME = 'administrators'
+USER_GROUP_NAME = 'users'
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='creates db; add default admin user and groups for administrators and users'
+    )
+    parser.add_argument('-c', '--connection-string', action='store', help='connection string for db')
+    args = parser.parse_args()
+    init_schema.init_schema(args.connection_string)
+    engine = create_engine(args.connection_string)
+    session_maker = sessionmaker(bind=engine)
+    session = session_maker()
+    users.create_user(session, login='admin', password='password')
+    groups.create_group(session, name=ADMIN_GROUP_NAME)
+    groups.create_group(session, name=USER_GROUP_NAME)
+    groups.add_user_to_group(session, group_name=ADMIN_GROUP_NAME, user_login='admin')
+
+    for p in permissions.default_admin_permissions:
+        groups.add_permission_to_group(session,
+                                       group_name=ADMIN_GROUP_NAME,
+                                       function_name=p)
+
+
+if __name__ == "__main__":
+    main()

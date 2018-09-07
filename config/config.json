@@ -1,0 +1,4 @@
+{
+  "_db_connection_string": "sqlite+pysqlite:///test_web.db",
+  "db_connection_string": "mysql+pymysql://root:2360087@localhost/tbdd_pdm?charset=utf8"
+}
