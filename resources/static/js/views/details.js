@@ -23,7 +23,7 @@ Vue.component('view-details', {
     },
     mounted: function(){
         var self = this;
-        window.addEventListener("dragenter", function (e) {
+        window.addEventListener("dragenter", function () {
             self.filedraggedon = true;
         });
 

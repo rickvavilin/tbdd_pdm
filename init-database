@@ -19,7 +19,7 @@ def main():
     engine = create_engine(args.connection_string)
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
-    users.create_user(session, login='admin', password='password')
+    users.create_user(session, login='admin', password='password', display_name='Администратор')
     groups.create_group(session, name=ADMIN_GROUP_NAME)
     groups.create_group(session, name=USER_GROUP_NAME)
     groups.add_user_to_group(session, group_name=ADMIN_GROUP_NAME, user_login='admin')

@@ -1,0 +1,210 @@
+<script type="text/javascript" src="/js/views/users.js">
+</script>
+<template id="view-users-template">
+    <div>
+        <div>
+            <div>
+                <div class="row">
+                    <span style="width: 1rem;"></span>
+                    <a class="btn btn-outline-secondary" v-on:click="loadData()" title="Обновить список"><i class="fas fa-fw fa-sync-alt"></i>
+                    </a>
+                    <span style="width: 0.2rem;"></span>
+                    <a class="btn btn-outline-secondary"
+                       v-on:click="addUser()"
+                       v-if="havePermission('tbdd_pdm_core.api.users.create_user')"
+                       title="Создать пользователя"
+                    >
+                        <i class="fas fa-fw fa-plus">
+
+                        </i>
+                    </a>
+                    <span style="width: 0.2rem;"></span>
+                    <input class="form-control form-inline" style="max-width: 20rem" placeholder="Фильтр" v-model="user_filter" v-on:input="loadData">
+
+                </div>
+            </div>
+            <div style="height:1rem"></div>
+            <table class="table table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>Логин</th>
+                    <th>ФИО</th>
+                    <th></th>
+                </tr>
+
+                </thead>
+                <tbody>
+                    <tr v-for="user in users">
+                        <td>{{ user.login }}</td>
+                        <td>{{ user.display_name }}</td>
+                        <td>
+                            <a class="btn btn-outline-secondary btn-sm"
+                               v-on:click="editUser(user)"
+                               title="Редактировать пользователя"
+                               v-if="havePermission('tbdd_pdm_core.api.users.update_user')"
+                            >
+                                <i class="far fa-fw fa-edit">
+
+                                </i>
+                            </a>
+                            <a class="btn btn-outline-secondary btn-sm"
+                               v-on:click="changePassword(user)"
+                               title="Сменить пароль"
+                               v-if="havePermission('tbdd_pdm_core.api.users.change_password')"
+                            >
+                                <i class="fas fa-fw fa-key">
+
+                                </i>
+                            </a>
+                            <a class="btn btn-outline-secondary btn-sm"
+                               v-on:click="editGroup(user)"
+                               title="Группы">
+                                <i class="fas fa-fw fa-users">
+
+                                </i>
+                            </a>
+                            <a class="btn btn-outline-danger btn-sm"
+                               title="Удалить пользователя"
+                               v-on:click="deleteUserConfirm(user)"
+                               v-if="havePermission('tbdd_pdm_core.api.users.delete_user') && (user.login!=userinfo.login)">
+                                <i class="far fa-fw fa-trash-alt">
+
+                                </i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div v-show="showmodal">
+            <div class="modal fade show" style="display: block" tabindex="-1">
+              <div class="modal-dialog" style="max-width: 50rem">
+                <div class="modal-content" >
+                  <div class="modal-header">
+                    <h5 class="modal-title">Пользователь</h5>
+                    <button class="close" type="button" v-on:click="showmodal=false">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="alert alert-danger alert-dismissible" v-for="message, index in messages">
+                          <button type="button" class="close" v-on:click="messages.splice(index,1)" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          {{ message.text }}
+                      </div>
+                    <label>Логин</label>
+                      <input v-model="current_user.login" class="form-control">
+                    <label>ФИО</label>
+                      <input v-model="current_user.display_name" class="form-control">
+                    <label>Пароль</label>
+                      <input v-model="current_user.password" class="form-control" type="password">
+                    <label>Подтверждение</label>
+                      <input v-model="current_user.password_confirmation" class="form-control" type="password">
+                    <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" v-on:click="showmodal=false">Закрыть</button>
+                    <button class="btn btn-primary" v-on:click="saveNewUser" v-if="havePermission('tbdd_pdm_core.api.users.create_user')" >Сохранить</button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+        </div>
+
+        <div v-show="showedituser">
+            <div class="modal fade show" style="display: block" tabindex="-1">
+              <div class="modal-dialog" style="max-width: 50rem">
+                <div class="modal-content" >
+                  <div class="modal-header">
+                    <h5 class="modal-title">Пользователь</h5>
+                    <button class="close" type="button" v-on:click="showedituser=false">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="alert alert-danger alert-dismissible" v-for="message, index in messages">
+                          <button type="button" class="close" v-on:click="messages.splice(index,1)" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          {{ message.text }}
+                      </div>
+                    <label>Логин</label>
+                      <input v-bind:value="current_user.login" class="form-control" disabled>
+
+                    <label>ФИО</label>
+                      <input v-model="current_user.display_name" class="form-control">
+                    <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" v-on:click="showedituser=false">Закрыть</button>
+                    <button class="btn btn-primary" v-on:click="saveEditedUser" v-if="havePermission('tbdd_pdm_core.api.users.update_user')" >Сохранить</button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+        </div>
+
+        <div v-show="showchangepassword">
+            <div class="modal fade show" style="display: block" tabindex="-1">
+              <div class="modal-dialog" style="max-width: 50rem">
+                <div class="modal-content" >
+                  <div class="modal-header">
+                    <h5 class="modal-title">Пользователь</h5>
+                    <button class="close" type="button" v-on:click="showchangepassword=false">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="alert alert-danger alert-dismissible" v-for="message, index in messages">
+                          <button type="button" class="close" v-on:click="messages.splice(index,1)" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          {{ message.text }}
+                      </div>
+                    <label>Логин</label>
+                      <input v-bind:value="current_user.login" class="form-control" disabled>
+                    <label>Пароль</label>
+                      <input v-model="current_user.password" class="form-control" type="password">
+                    <label>Подтверждение</label>
+                      <input v-model="current_user.password_confirmation" class="form-control" type="password">
+
+                    <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" v-on:click="showchangepassword=false">Закрыть</button>
+                    <button class="btn btn-primary" v-on:click="saveChangedPassword" v-if="havePermission('tbdd_pdm_core.api.users.change_password')" >Сохранить</button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+        </div>
+
+        <div v-show="showdeleteconfirm">
+            <div class="modal fade show" style="display: block" tabindex="-1">
+              <div class="modal-dialog" style="max-width: 50rem">
+                <div class="modal-content" >
+                  <div class="modal-header">
+                    <h5 class="modal-title">Удалить пользователя</h5>
+                    <button class="close" type="button" v-on:click="showdeleteconfirm=false">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      Вы действительно хотите удалить {{ current_user.login }} ({{ current_user.display_name }})
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" v-on:click="showdeleteconfirm=false">Отмена</button>
+                    <button class="btn btn-danger" v-on:click="deleteUser(current_user)" v-if="havePermission('tbdd_pdm_core.api.users.delete_user')" >Удалить</button>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+        </div>
+    </div>
+</template>

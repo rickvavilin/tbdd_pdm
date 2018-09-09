@@ -19,6 +19,8 @@ default_admin_permissions = [
     'tbdd_pdm_core.api.files.add_file_to_detail',
     'tbdd_pdm_core.api.files.delete_file_by_detail_and_name',
     'tbdd_pdm_core.api.users.create_user',
+    'tbdd_pdm_core.api.users.update_user',
+    'tbdd_pdm_core.api.users.change_password',
     'tbdd_pdm_core.api.users.delete_user',
     'tbdd_pdm_core.api.groups.create_group',
     'tbdd_pdm_core.api.groups.delete_group',

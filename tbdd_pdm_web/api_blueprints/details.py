@@ -1,7 +1,7 @@
-__author__ = 'Aleksandr Vavilin'
-from flask import Blueprint, render_template, request, Response, current_app, session, jsonify
+from flask import Blueprint, request, Response, current_app, session, jsonify
 import flask_sqlalchemy
 from tbdd_pdm_core.api import details, files, exceptions
+__author__ = 'Aleksandr Vavilin'
 
 db = flask_sqlalchemy.SQLAlchemy(current_app)
 

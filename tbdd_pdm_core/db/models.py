@@ -21,6 +21,7 @@ class User(Base, DictMixin):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, autoincrement=True)
     login = Column(String(50), unique=True, index=True)
+    display_name = Column(String(255))
     password_hash = Column(String(255))
 
 
