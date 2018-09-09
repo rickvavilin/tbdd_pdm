@@ -62,3 +62,27 @@ def change_password(login):
                           login=login,
                           password=request.json['password'],
                           _current_user_login=session.get('login'))
+
+
+@node.route('<string:login>/groups', methods=['GET', 'POST'])
+def get_user_groups(login):
+    if request.method == 'GET':
+        return jsonify(groups.get_groups_of_user(db.session,
+                                                 user_login=login,
+                                                 _current_user_login=session.get('login')))
+    elif request.method == 'POST':
+        if not request.is_json:
+            return jsonify({}), 400
+        group_name = request.json['group']
+        return jsonify(groups.add_user_to_group(db.session,
+                                                group_name=group_name,
+                                                user_login=login,
+                                                _current_user_login=session.get('login')))
+
+
+@node.route('<string:login>/groups/<string:group_name>', methods=['DELETE'])
+def remove_user_from_group(login, group_name):
+    return jsonify(groups.remove_user_from_group(db.session,
+                                                 group_name=group_name,
+                                                 user_login=login,
+                                                 _current_user_login=session.get('login')))

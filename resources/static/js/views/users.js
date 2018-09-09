@@ -14,8 +14,13 @@ Vue.component('view-users', {
             showedituser: this.showedituser,
             showchangepassword: this.showchangepassword,
             showdeleteconfirm: this.showdeleteconfirm==undefined ? false : this.showdeleteconfirm,
+            showgroupsdialog: this.showgroupsdialog,
             current_user: this.current_user==undefined ? Object.assign({}, DEFAULT_USER) : this.current_user,
             messages: this.messages==undefined ? [] : this.messages,
+            selected_group: this.selected_group,
+            current_user_groups: this.current_user_groups==undefined ? [] : this.current_user_groups,
+            available_groups: this.available_groups==undefined ? [] : this.available_groups
+
         }
     },
     props: {
@@ -42,6 +47,11 @@ Vue.component('view-users', {
             api_fetch_json(['users'], {}, params).then(
                 (data) => {
                     this.users = data.data;
+                }
+            );
+            api_fetch_json(['groups'], {}).then(
+                (data) => {
+                    this.available_groups = data.data;
                 }
             )
         },
@@ -106,6 +116,33 @@ Vue.component('view-users', {
                 }
             )
 
+        },
+        editGroup: function(user){
+
+            api_fetch_json(['users', user.login, 'groups'], {}).then(
+                (data) => {
+                    this.current_user = user;
+                    this.current_user_groups = data;
+                    this.showgroupsdialog = true;
+                }
+            )
+        },
+        addGroup: function(user, group){
+            api_post_json(['users', user.login, 'groups'], {group: group}, {}).then(
+                (data) => {
+                    this.editGroup(user)
+                }
+            )
+        },
+        removeGroup: function(user, group){
+            api_delete_json(['users', user.login, 'groups', group], {}).then(
+                (data) => {
+                    this.editGroup(user)
+                }
+            )
+        },
+        currentUserHasGroup: function(group_name){
+            return this.current_user_groups.findIndex((item) => {return item.name == group_name})>=0;
         }
 
     }

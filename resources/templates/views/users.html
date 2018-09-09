@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div style="height:1rem"></div>
-            <table class="table table-bordered table-sm">
+            <table class="table table-bordered table-sm" style="max-width: 60rem">
                 <thead>
                 <tr>
                     <th>Логин</th>
@@ -174,6 +174,83 @@
                     <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" v-on:click="showchangepassword=false">Закрыть</button>
                     <button class="btn btn-primary" v-on:click="saveChangedPassword" v-if="havePermission('tbdd_pdm_core.api.users.change_password')" >Сохранить</button>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-backdrop fade show"></div>
+        </div>
+
+        <div v-show="showgroupsdialog">
+            <div class="modal fade show" style="display: block" tabindex="-1">
+              <div class="modal-dialog" style="max-width: 50rem">
+                <div class="modal-content" >
+                  <div class="modal-header">
+                    <h5 class="modal-title">Группы пользователя</h5>
+                    <button class="close" type="button" v-on:click="showgroupsdialog=false">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="alert alert-danger alert-dismissible" v-for="message, index in messages">
+                          <button type="button" class="close" v-on:click="messages.splice(index,1)" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                          {{ message.text }}
+                      </div>
+                      <h4>{{ current_user.login }} ({{ current_user.display_name }})</h4>
+                      <div class="row">
+                          <span style="width:1rem"></span>
+                      <select class="form-control form-inline" v-model="selected_group" style="max-width: 20rem">
+                            <option v-for="group in available_groups">{{ group.name }}</option>
+                      </select>
+                          <span style="width:0.3rem"></span>
+                      <button class="btn btn-outline-secondary"
+                           v-on:click="addGroup(current_user, selected_group)"
+                           title="Добавить группу"
+                           v-bind:disabled="(selected_group==undefined) || (currentUserHasGroup(selected_group))"
+                        >
+                        <i class="fas fa-fw fa-plus">
+
+                        </i>
+                      </button>
+
+
+                      </div>
+                      <div style="height: 1rem"></div>
+                      <table class="table table-bordered">
+                          <thead>
+                          <tr>
+                              <th>
+                                  Группа
+                              </th>
+                              <th>
+
+                              </th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr v-for="group in current_user_groups">
+                              <td>{{ group.name }}</td>
+                              <td>
+                                <a class="btn btn-outline-danger btn-sm"
+                                   title="Удалить пользователя из группы"
+                                   v-on:click="removeGroup(current_user, group.name)"
+                                   v-if="havePermission('tbdd_pdm_core.api.users.delete_user') && (current_user.login!=userinfo.login)">
+                                    <i class="far fa-fw fa-trash-alt">
+
+                                    </i>
+                                </a>
+                              </td>
+                          </tr>
+                          </tbody>
+
+                      </table>
+
+                    <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" v-on:click="showgroupsdialog=false">Закрыть</button>
 
                     </div>
                   </div>
