@@ -1,8 +1,9 @@
-__author__ = 'Aleksandr Vavilin'
 from ..db import models
 from .exceptions import *
 import sqlalchemy.exc
+from sqlalchemy import or_
 from .permissions import check_permissions
+__author__ = 'Aleksandr Vavilin'
 
 
 @check_permissions
@@ -104,5 +105,27 @@ def get_groups_of_user(session, user_login=None, **kwargs):
             result.append(group.get_dict_fields())
         return result
 
+    finally:
+        session.rollback()
+
+
+def get_list(session, results_per_page=20, page=1, simple_filter=None, filter=None, **kwargs):
+    result = {}
+    try:
+        q = session.query(models.Group)
+        if simple_filter is not None:
+            simple_filter = '%'+simple_filter+'%'
+            q = q.filter(models.Group.name(simple_filter))
+        total_count = q.count()
+        total_pages = int(total_count/results_per_page)+1
+        result['total_count'] = total_count
+        result['total_pages'] = total_pages
+        result['data'] = []
+
+        for group in q.offset(
+            (page-1)*results_per_page
+        ).limit(results_per_page):
+            result['data'].append(group.get_dict_fields())
+        return result
     finally:
         session.rollback()
