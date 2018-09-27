@@ -5,7 +5,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.dialects.sqlite.base import SQLiteDialect
 from tbdd_pdm_core.api import exceptions
 from tbdd_pdm_core.config import get_config
-from .api_blueprints import register_api_blueprints
+from tbdd_pdm_web.api_blueprints import register_api_blueprints
 __author__ = 'Aleksandr Vavilin'
 
 
