@@ -201,24 +201,7 @@
                           {{ message.text }}
                       </div>
                       <h4>{{ current_user.login }} ({{ current_user.display_name }})</h4>
-                      <div class="row">
-                          <span style="width:1rem"></span>
-                      <select class="form-control form-inline" v-model="selected_group" style="max-width: 20rem">
-                            <option v-for="group in available_groups">{{ group.name }}</option>
-                      </select>
-                          <span style="width:0.3rem"></span>
-                      <button class="btn btn-outline-secondary"
-                           v-on:click="addGroup(current_user, selected_group)"
-                           title="Добавить группу"
-                           v-bind:disabled="(selected_group==undefined) || (currentUserHasGroup(selected_group))"
-                        >
-                        <i class="fas fa-fw fa-plus">
 
-                        </i>
-                      </button>
-
-
-                      </div>
                       <div style="height: 1rem"></div>
                       <table class="table table-bordered">
                           <thead>
@@ -232,18 +215,29 @@
                           </tr>
                           </thead>
                           <tbody>
-                          <tr v-for="group in current_user_groups">
+                          <tr v-for="group in available_groups">
                               <td>{{ group.name }}</td>
                               <td>
-                                <a class="btn btn-outline-danger btn-sm"
-                                   title="Удалить пользователя из группы"
+                                <button class="btn btn-outline-secondary btn-sm"
+                                   title="Пользователь в группе, нажмите чтоб исключить пользователя из группы"
                                    v-on:click="removeGroup(current_user, group.name)"
-                                   v-if="havePermission('tbdd_pdm_core.api.users.delete_user') && (current_user.login!=userinfo.login)">
-                                    <i class="far fa-fw fa-trash-alt">
+                                   v-bind:disabled="!(havePermission('tbdd_pdm_core.api.users.delete_user')  && (current_user.login!=userinfo.login)) "
+                                   v-if="currentUserHasGroup(group.name)">
+                                    <i class="fas fa-fw fa-check">
 
                                     </i>
-                                </a>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm "
+                                   title="Пользователь не в группе, нажмите чтоб добавить пользователя в группу"
+                                   v-on:click="addGroup(current_user, group.name)"
+                                   v-bind:disabled="!(havePermission('tbdd_pdm_core.api.users.delete_user')  && (current_user.login!=userinfo.login)) "
+                                   v-if="(!currentUserHasGroup(group.name))">
+                                    <i class="fas fa-fw ">
+
+                                    </i>
+                                </button>
                               </td>
+
                           </tr>
                           </tbody>
 

@@ -23,6 +23,8 @@ app = CustomFlask(__name__,
                   static_folder=config.get('static_folder', '../resources/static'),
                   static_url_path='')
 app.config['SQLALCHEMY_DATABASE_URI'] = config['db_connection_string']
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 db = flask_sqlalchemy.SQLAlchemy(app)
 
