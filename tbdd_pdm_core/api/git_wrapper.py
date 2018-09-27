@@ -15,6 +15,8 @@ def add_file(path, git_root_path=None, committer_name=None, committer_email=None
     env = os.environ
     env['GIT_AUTHOR_NAME'] = committer_name
     env['GIT_AUTHOR_EMAIL'] = committer_email
+    env['GIT_COMMITTER_NAME'] = committer_name
+    env['GIT_COMMITTER_EMAIL'] = committer_email
     env['GIT_DIR'] = os.path.join(git_root_path, '.git')
     env['GIT_WORK_TREE'] = git_root_path
     print(git_root_path, path)
@@ -32,6 +34,9 @@ def gelete_file(path, git_root_path=None, committer_name=None, committer_email=N
     env = os.environ
     env['GIT_AUTHOR_NAME'] = committer_name
     env['GIT_AUTHOR_EMAIL'] = committer_email
+    env['GIT_COMMITTER_NAME'] = committer_name
+    env['GIT_COMMITTER_EMAIL'] = committer_email
+
     env['GIT_DIR'] = os.path.join(git_root_path, '.git')
     env['GIT_WORK_TREE'] = git_root_path
     p = subprocess.Popen(['git', 'rm', '-f', path], env=env, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
