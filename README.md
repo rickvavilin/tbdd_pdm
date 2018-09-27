@@ -6,6 +6,9 @@ Simple [PDM](https://en.wikipedia.org/wiki/Product_data_management) system for i
 * [SQLAlchemy](http://www.sqlalchemy.org/)
 * Flask-SQLAlchemy
 * MySQL, SQLite as database backend
+* pymysql for MySQL backend; pysqlite for SQLite backend
+* git
+* GitPython
 
 # Installing
 1. Install requirements
