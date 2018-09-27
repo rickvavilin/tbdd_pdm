@@ -31,7 +31,10 @@ Vue.component('view-assembly', {
             selected_assembly: undefined,
             detail_info_visible: this.detail_info_visible==undefined ? false: this.detail_info_visible,
             details: this.details==undefined ? [] : this.details,
-            detail_filter: ""
+            detail_filter: "",
+            current_page: 1,
+            total_pages: 1
+
         }
     },
     props: {
@@ -69,6 +72,14 @@ Vue.component('view-assembly', {
                 }
             )
         },
+        prevPage: function(){
+            this.current_page--;
+            this.loadDetails();
+        },
+        nextPage: function(){
+            this.current_page++;
+            this.loadDetails();
+        },
         loadDetails: function(){
             let params = {};
             if (this.detail_filter) {
@@ -77,6 +88,7 @@ Vue.component('view-assembly', {
             api_fetch_json(['details'], {}, params).then(
                 (data) => {
                     this.details = data.data;
+                    this.total_pages = data.total_pages;
                 }
             )
         },
