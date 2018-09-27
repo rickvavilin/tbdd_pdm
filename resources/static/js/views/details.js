@@ -15,7 +15,9 @@ Vue.component('view-details', {
             showdeleteconfirm: this.showdeleteconfirm==undefined ? false : this.showdeleteconfirm,
             current_detail: this.current_detail==undefined ? Object.assign({}, DEFAULT_DETAIL) : this.current_detail,
             messages: this.messages==undefined ? [] : this.messages,
-            detail_filter: this.detail_filter
+            detail_filter: this.detail_filter,
+            current_page: 1,
+            total_pages: 1
         }
     },
     props: {
@@ -95,15 +97,25 @@ Vue.component('view-details', {
             )
         },
         loadData: function(){
-            let params = {};
+            let params = {'page': this.current_page};
             if (this.detail_filter) {
                 params.simple_filter = this.detail_filter;
             }
             api_fetch_json(['details'], {}, params).then(
                 (data) => {
                     this.details = data.data;
+                    this.total_pages = data.total_pages;
+
                 }
             )
+        },
+        prevPage: function(){
+            this.current_page--;
+            this.loadData();
+        },
+        nextPage: function(){
+            this.current_page++;
+            this.loadData();
         },
         addDetail: function(){
             this.current_detail = Object.assign({}, DEFAULT_DETAIL);
