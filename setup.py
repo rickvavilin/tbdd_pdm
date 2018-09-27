@@ -20,6 +20,7 @@ if __name__ == '__main__':
         packages=[
             'tbdd_pdm_core',
             'tbdd_pdm_core.db',
+            'tbdd_pdm_core.config',
             'tbdd_pdm_core.api',
             'tbdd_pdm_web',
             'tbdd_pdm_web.api_blueprints',
