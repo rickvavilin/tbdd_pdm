@@ -24,7 +24,7 @@
 <template id="view-assembly-template">
 <div class="h-100">
       <div class="h-100">
-        <div class="row h-100" style="padding-bottom: 1rem">
+        <div class="row h-100" style="padding-bottom: 1rem; max-height: calc(100vh - 67px)">
             <div class="col-4 h-100">
                 <div class="card h-100">
                     <div class="card-header">
@@ -88,6 +88,7 @@
                                 </button>
                             </div>
                             <div style="height:1rem"></div>
+                            <div style="overflow-y: scroll">
                             <table>
                                 <table class="table table-bordered table-sm">
                                     <thead>
@@ -129,6 +130,7 @@
                                     </tbody>
                                 </table>
                             </table>
+                            </div>
                         </div>
                         <div v-else>
                             <div v-if="selected_assembly!=undefined">
