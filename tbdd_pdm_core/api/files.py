@@ -101,10 +101,10 @@ def delete_file_by_detail_and_name(session, detail_id=None, filename=None, user_
             session.delete(detail_file)
             session.commit()
         except:
-            if os.path.exists(full_file_name):
+            if os.path.exists(full_file_name+'.deleted'):
                 os.rename(full_file_name+'.deleted', full_file_name)
             raise
-        if os.path.exists(full_file_name):
+        if os.path.exists(full_file_name+'.deleted'):
             os.rename(full_file_name+'.deleted', full_file_name)
             os.unlink(full_file_name)
             git_wrapper.gelete_file(full_file_name,
