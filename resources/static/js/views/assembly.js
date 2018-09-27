@@ -81,7 +81,7 @@ Vue.component('view-assembly', {
             this.loadDetails();
         },
         loadDetails: function(){
-            let params = {};
+            let params = {page: this.current_page};
             if (this.detail_filter) {
                 params.simple_filter = this.detail_filter;
             }
