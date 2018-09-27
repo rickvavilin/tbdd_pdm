@@ -17,6 +17,8 @@ $().ready(function(){
            doLogin: function(){
                api_login(this.loginform.login, this.loginform.password).then(
                    (data) => {
+                       this.loginform.login = '';
+                       this.loginform.password = '';
                        this.checkLoggedIn();
                        //this.userinfo = data;
                    }
@@ -39,6 +41,7 @@ $().ready(function(){
                            this.userinfo = data.userinfo;
                        } else {
                            this.userinfo.login = '';
+
                        }
                    }
                )
