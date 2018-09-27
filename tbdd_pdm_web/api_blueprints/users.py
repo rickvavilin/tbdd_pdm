@@ -26,7 +26,7 @@ def index():
             return jsonify({'message': 'Пользователь уже существует'}), 400
 
 
-@node.route('<string:login>', methods=['GET', 'POST', 'DELETE'])
+@node.route('/<string:login>', methods=['GET', 'POST', 'DELETE'])
 def get_user_by_id(login):
     try:
         if request.method == 'GET':
@@ -45,7 +45,7 @@ def get_user_by_id(login):
         return jsonify({}), 404
 
 
-@node.route('password', methods=['POST'])
+@node.route('/password', methods=['POST'])
 def change_own_password():
     if not request.is_json:
         return jsonify({}), 400
@@ -54,7 +54,7 @@ def change_own_password():
                               _current_user_login=session.get('login'))
 
 
-@node.route('password/<string:login>', methods=['POST'])
+@node.route('/password/<string:login>', methods=['POST'])
 def change_password(login):
     if not request.is_json:
         return jsonify({}), 400
@@ -64,7 +64,7 @@ def change_password(login):
                           _current_user_login=session.get('login'))
 
 
-@node.route('<string:login>/groups', methods=['GET', 'POST'])
+@node.route('/<string:login>/groups', methods=['GET', 'POST'])
 def get_user_groups(login):
     if request.method == 'GET':
         return jsonify(groups.get_groups_of_user(db.session,
@@ -80,7 +80,7 @@ def get_user_groups(login):
                                                 _current_user_login=session.get('login')))
 
 
-@node.route('<string:login>/groups/<string:group_name>', methods=['DELETE'])
+@node.route('/<string:login>/groups/<string:group_name>', methods=['DELETE'])
 def remove_user_from_group(login, group_name):
     return jsonify(groups.remove_user_from_group(db.session,
                                                  group_name=group_name,

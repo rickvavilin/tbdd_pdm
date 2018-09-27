@@ -5,6 +5,8 @@ Simple [PDM](https://en.wikipedia.org/wiki/Product_data_management) system for i
 * [Flask](http://flask.pocoo.org/)
 * [SQLAlchemy](http://www.sqlalchemy.org/)
 * Flask-SQLAlchemy
+* dateutil
+* json5
 * MySQL, SQLite as database backend
 * pymysql for MySQL backend; pysqlite for SQLite backend
 * git

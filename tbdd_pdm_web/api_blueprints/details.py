@@ -44,7 +44,7 @@ def get_detail_by_id(detail_id):
         return jsonify({}), 404
 
 
-@node.route('<int:detail_id>/files', methods=['POST'])
+@node.route('/<int:detail_id>/files', methods=['POST'])
 def add_files_to_detail(detail_id):
     for filename, file in request.files.items():
         try:
@@ -59,12 +59,12 @@ def add_files_to_detail(detail_id):
     return jsonify({'result': 'OK'})
 
 
-@node.route('<int:detail_id>/files/<filename>/history')
+@node.route('/<int:detail_id>/files/<filename>/history')
 def get_file_history_from_detail(detail_id, filename):
     return jsonify(files.get_file_history(db.session, detail_id=detail_id, filename=filename))
 
 
-@node.route('<int:detail_id>/files/<filename>', methods=['GET', 'DELETE'])
+@node.route('/<int:detail_id>/files/<filename>', methods=['GET', 'DELETE'])
 def process_file_from_detail(detail_id, filename):
     if request.method == 'GET':
         response = Response(

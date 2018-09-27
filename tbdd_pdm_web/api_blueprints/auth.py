@@ -8,7 +8,7 @@ db = flask_sqlalchemy.SQLAlchemy(current_app)
 node = Blueprint('auth', __name__)
 
 
-@node.route('login', methods=['POST'])
+@node.route('/login', methods=['POST'])
 def login():
     user_login = request.json.get('login')
     user_password_hash = request.json.get('password_hash')
@@ -20,13 +20,13 @@ def login():
         return jsonify({'result': 'login failed'}), 200
 
 
-@node.route('logout')
+@node.route('/logout')
 def logout():
     session.pop('login')
     return jsonify({'result': 'OK'}), 200
 
 
-@node.route('loggedin')
+@node.route('/loggedin')
 def loggedin():
     result = {'result': 'login' in session}
     if result['result']:
