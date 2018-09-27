@@ -12,8 +12,8 @@ node = Blueprint('details', __name__)
 def index():
     if request.method == 'GET':
 
-        results_per_page = request.args.get('results_per_page', 20)
-        page = request.args.get('page', 1)
+        results_per_page = int(request.args.get('results_per_page', 20))
+        page = int(request.args.get('page', 1))
         return jsonify(details.get_list(db.session,
                                         results_per_page=results_per_page,
                                         page=page,
