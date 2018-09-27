@@ -23,6 +23,7 @@ $().ready(function(){
                )
            },
            doLogout: function(){
+               $('#logoutModal').modal('hide');
                api_logout().then(
                    (data) => {
                        this.checkLoggedIn();
