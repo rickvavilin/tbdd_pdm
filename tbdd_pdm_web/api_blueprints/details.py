@@ -28,7 +28,7 @@ def index():
             return jsonify({'message': 'Деталь уже существует'}), 400
 
 
-@node.route('<int:detail_id>', methods=['GET', 'POST', 'DELETE'])
+@node.route('/<int:detail_id>', methods=['GET', 'POST', 'DELETE'])
 def get_detail_by_id(detail_id):
     try:
         if request.method == 'GET':
