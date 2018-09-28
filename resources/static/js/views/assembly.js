@@ -92,6 +92,9 @@ Vue.component('view-assembly', {
                 }
             )
         },
+        getBom: function() {
+            window.location = '/api/assembly/bom/'+this.current_assembly.id;
+        },
         addDetailToAssembly: function (detail) {
             api_fetch_json(['assembly', 'add', this.current_assembly.id, detail.id, 1], {}).then(
                 (data) => {
