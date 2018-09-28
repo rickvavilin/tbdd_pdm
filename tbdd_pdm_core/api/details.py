@@ -131,11 +131,14 @@ def _get_assembly_tree_internal(session, parent_id=None, level=0, count_multipli
                 count_mul = link.count
             else:
                 count_mul = 1
-            child_dict['children'] = _get_assembly_tree_internal(session,
-                                                                 parent_id=child.id,
-                                                                 level=level+1,
-                                                                 count_multiplier=count_mul,
-                                                                 use_count_multiplier=use_count_multiplier)
+            if child.is_standard:
+                child_dict['children'] = []
+            else:
+                child_dict['children'] = _get_assembly_tree_internal(session,
+                                                                     parent_id=child.id,
+                                                                     level=level+1,
+                                                                     count_multiplier=count_mul,
+                                                                     use_count_multiplier=use_count_multiplier)
             child_dict['count'] = link.count*count_multiplier
             child_dict['files'] = _get_detail_files(session, child.id)
             result.append(child_dict)
