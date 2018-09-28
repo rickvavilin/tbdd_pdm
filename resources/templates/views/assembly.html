@@ -64,9 +64,8 @@
             </div>
             <div class="col h-100" style="padding-left: 0">
                 <div class="card h-100">
-                    <div class="card-body">
                         <div v-if="!detail_info_visible">
-                            <div class="row">
+                            <div class="card-header">
                                 <span style="width: 1rem;"></span>
                                 <a class="btn btn-outline-secondary" v-on:click="loadDetails()" title="Обновить список"><i class="fas fa-fw fa-sync-alt"></i>
                                 </a>
@@ -88,7 +87,7 @@
                                 </button>
                             </div>
                             <div style="height:1rem"></div>
-                            <div style="overflow-y: scroll">
+                            <div class="card-body">
                             <table>
                                 <table class="table table-bordered table-sm">
                                     <thead>
@@ -132,7 +131,7 @@
                             </table>
                             </div>
                         </div>
-                        <div v-else>
+                        <div v-else class="card-body">
                             <div v-if="selected_assembly!=undefined">
                                 <div><span>Шифр детали: </span><span class="form-control">{{ selected_assembly.code }}</span></div>
                                 <div><span>Наименование: </span><span class="form-control">{{ selected_assembly.name }}</span></div>
@@ -148,7 +147,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+
                 </div>
             </div>
 
