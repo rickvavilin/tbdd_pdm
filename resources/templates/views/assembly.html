@@ -22,19 +22,19 @@
     </div>
 </template>
 <template id="view-assembly-template">
-<div class="h-100">
-      <div class="h-100">
-        <div class="row h-100" style="padding-bottom: 1rem; max-height: calc(100vh - 67px)">
-            <div class="col-4 h-100">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <button class="btn btn-outline-dark btn-sm"
-                                v-on:click="detail_info_visible=!detail_info_visible"
-                                v-bind:class="{active: detail_info_visible}"
-                        >
-                            <i title="Показать подробную информацию о детали" class="fas fa-fw fa-cogs">
-                            </i>
-                        </button>
+    <div class="h-100">
+        <div class="h-100">
+            <div class="row h-100" style="padding-bottom: 1rem; max-height: calc(100vh - 67px)">
+                <div class="col-4 h-100">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <button class="btn btn-outline-dark btn-sm"
+                                    v-on:click="detail_info_visible=!detail_info_visible"
+                                    v-bind:class="{active: detail_info_visible}"
+                            >
+                                <i title="Показать подробную информацию о детали" class="fas fa-fw fa-cogs">
+                                </i>
+                            </button>
                         <span v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')">
                             <button class="btn btn-outline-dark btn-sm"
                                     title="Уменьшить количество или убрать деталь из сборки"
@@ -50,22 +50,22 @@
                             </button>
                         </span>
 
-                    </div>
-                    <div class="card-body" style="overflow: scroll">
+                        </div>
+                        <div class="card-body" style="overflow: scroll">
 
-                         <assembly-item
-                                 v-if="current_assembly!=undefined"
-                                 v-bind:assembly="current_assembly"
-                                 v-bind:selected_assembly="selected_assembly"
-                                 v-on:select="selectItem">
-                         </assembly-item>
+                            <assembly-item
+                                    v-if="current_assembly!=undefined"
+                                    v-bind:assembly="current_assembly"
+                                    v-bind:selected_assembly="selected_assembly"
+                                    v-on:select="selectItem">
+                            </assembly-item>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col h-100" style="padding-left: 0">
-                <div v-if="!detail_info_visible" class="card h-100">
-                            <div class="card-header">
-                                <div class="row">
+                <div class="col h-100" style="padding-left: 0">
+                    <div v-if="!detail_info_visible" class="card h-100">
+                        <div class="card-header">
+                            <div class="row">
                                 <span style="width: 1rem;"></span>
                                 <a class="btn btn-outline-secondary" v-on:click="loadDetails()" title="Обновить список"><i class="fas fa-fw fa-sync-alt"></i>
                                 </a>
@@ -73,9 +73,9 @@
                                 <input class="form-control form-inline" style="max-width: 20rem" placeholder="Фильтр" v-model="detail_filter" v-on:input="loadDetails">
                                 <span style="width: 0.2rem;"></span>
                                 <button  v-bind:disabled="current_page==1"
-                                     class="btn btn-outline-secondary"
-                                     v-on:click="prevPage()"
-                                     title="Обновить список">
+                                         class="btn btn-outline-secondary"
+                                         v-on:click="prevPage()"
+                                         title="Обновить список">
                                     <i class="fas fa-fw fa-arrow-left"></i>
                                 </button>
                                 <span style="width: 0.2rem;"></span>
@@ -85,10 +85,9 @@
                                         title="Обновить список">
                                     <i class="fas fa-fw fa-arrow-right"></i>
                                 </button>
-                                </div>
                             </div>
-                            <div style="height:1rem"></div>
-                            <div class="card-body" style="overflow-y: scroll">
+                        </div>
+                        <div class="card-body" style="overflow-y: scroll; padding-bottom: 1rem">
                             <table>
                                 <table class="table table-bordered table-sm">
                                     <thead>
@@ -102,38 +101,39 @@
 
                                     </thead>
                                     <tbody>
-                                        <tr v-for="detail in details">
-                                            <td><input type="checkbox" v-model="detail._checked"></td>
-                                            <td>{{ detail.code }}</td>
-                                            <td>{{ detail.name }}</td>
-                                            <td class="text-truncate" style="max-width: 20rem" v-bind:title="detail.description">{{ detail.description }}</td>
-                                            <td style="min-width: 5.5rem">
-                                                <a class="btn btn-outline-secondary btn-sm"
-                                                   title="Добавить деталь в текущую сборку"
-                                                   v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')"
-                                                   v-on:click="addDetailToAssembly(detail)">
-                                                    <i class="fas fa-fw fa-plus">
+                                    <tr v-for="detail in details">
+                                        <td><input type="checkbox" v-model="detail._checked"></td>
+                                        <td>{{ detail.code }}</td>
+                                        <td>{{ detail.name }}</td>
+                                        <td class="text-truncate" style="max-width: 20rem" v-bind:title="detail.description">{{ detail.description }}</td>
+                                        <td style="min-width: 5.5rem">
+                                            <a class="btn btn-outline-secondary btn-sm"
+                                               title="Добавить деталь в текущую сборку"
+                                               v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')"
+                                               v-on:click="addDetailToAssembly(detail)">
+                                                <i class="fas fa-fw fa-plus">
 
-                                                    </i>
-                                                </a>
-                                                <a class="btn btn-outline-secondary btn-sm"
-                                                   title="Редактировать деталь как сборку"
-                                                   v-on:click="editAssembly(detail)">
-                                                    <i class="far fa-fw fa-edit">
+                                                </i>
+                                            </a>
+                                            <a class="btn btn-outline-secondary btn-sm"
+                                               title="Редактировать деталь как сборку"
+                                               v-on:click="editAssembly(detail)">
+                                                <i class="far fa-fw fa-edit">
 
-                                                    </i>
-                                                </a>
+                                                </i>
+                                            </a>
 
 
-                                            </td>
-                                        </tr>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </table>
-                            </div>
                         </div>
-                        <div v-else class="card-body">
-                            <div v-if="selected_assembly!=undefined">
+                    </div>
+                    <div v-else class="card h-100">
+                        <div class="card-body">
+                            <div v-if="selected_assembly!=undefined" >
                                 <div><span>Шифр детали: </span><span class="form-control">{{ selected_assembly.code }}</span></div>
                                 <div><span>Наименование: </span><span class="form-control">{{ selected_assembly.name }}</span></div>
                                 <div>
@@ -148,11 +148,12 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
+
+                </div>
 
             </div>
-
         </div>
     </div>
-</div>
 </template>
