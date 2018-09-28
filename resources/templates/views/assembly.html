@@ -88,46 +88,44 @@
                             </div>
                         </div>
                         <div class="card-body" style="overflow-y: scroll; padding-bottom: 1rem">
-                            <table>
-                                <table class="table table-bordered table-sm">
-                                    <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Шифр детали</th>
-                                        <th>Наименование</th>
-                                        <th>Описание</th>
-                                        <th></th>
-                                    </tr>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Шифр детали</th>
+                                    <th>Наименование</th>
+                                    <th>Описание</th>
+                                    <th></th>
+                                </tr>
 
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="detail in details">
-                                        <td><input type="checkbox" v-model="detail._checked"></td>
-                                        <td>{{ detail.code }}</td>
-                                        <td>{{ detail.name }}</td>
-                                        <td class="text-truncate" style="max-width: 20rem" v-bind:title="detail.description">{{ detail.description }}</td>
-                                        <td style="min-width: 5.5rem">
-                                            <a class="btn btn-outline-secondary btn-sm"
-                                               title="Добавить деталь в текущую сборку"
-                                               v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')"
-                                               v-on:click="addDetailToAssembly(detail)">
-                                                <i class="fas fa-fw fa-plus">
+                                </thead>
+                                <tbody>
+                                <tr v-for="detail in details">
+                                    <td><input type="checkbox" v-model="detail._checked"></td>
+                                    <td>{{ detail.code }}</td>
+                                    <td>{{ detail.name }}</td>
+                                    <td class="text-truncate" style="max-width: 20rem" v-bind:title="detail.description">{{ detail.description }}</td>
+                                    <td style="min-width: 5.5rem">
+                                        <a class="btn btn-outline-secondary btn-sm"
+                                           title="Добавить деталь в текущую сборку"
+                                           v-if="havePermission('tbdd_pdm_core.api.details.add_detail_to_assembly')"
+                                           v-on:click="addDetailToAssembly(detail)">
+                                            <i class="fas fa-fw fa-plus">
 
-                                                </i>
-                                            </a>
-                                            <a class="btn btn-outline-secondary btn-sm"
-                                               title="Редактировать деталь как сборку"
-                                               v-on:click="editAssembly(detail)">
-                                                <i class="far fa-fw fa-edit">
+                                            </i>
+                                        </a>
+                                        <a class="btn btn-outline-secondary btn-sm"
+                                           title="Редактировать деталь как сборку"
+                                           v-on:click="editAssembly(detail)">
+                                            <i class="far fa-fw fa-edit">
 
-                                                </i>
-                                            </a>
+                                            </i>
+                                        </a>
 
 
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                    </td>
+                                </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
